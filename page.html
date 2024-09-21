@@ -78,11 +78,14 @@
             const color = e.target.value;
             console.log(color);
 
-            const hsl = hexToHSL(color);
+            let hsl = hexToHSL(color);
+
+            let out = Math.ceil((hsl / 360) * 255);
+
             console.log(hsl);
             // GET ?
             // Yes I know I'm lazy
-            fetch(`${window.location.origin}/color/${hsl}`)
+            fetch(`${window.location.origin}/color/${out}`)
                 .then(response => {
                     console.log(response);
                     current.style.backgroundColor = `hsl(${hsl}, 50%, 50%)`;
@@ -99,11 +102,13 @@
         fetch(`${window.location.origin}/color`)
             .then(response => response.text())
             .then(hsl => {
-                current.style.backgroundColor = `hsl(${hsl}, 50%, 50%)`;
+                current.style.backgroundColor = `hsl(${Math.ceil(hsl / 255 * 360)}, 50%, 50%)`;
             })
             .catch(error => {
                 console.error(error);
             });
+
+
 
 
 

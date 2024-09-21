@@ -5,6 +5,9 @@
 #include <EFLogging.h>
 #include "FSMState.h"
 
+#include <EFBoard.h>
+#include <EFLogging.h>
+
 #include <algorithm>
 #include <WiFi.h>
 #include <painlessMesh.h>
@@ -90,7 +93,15 @@ namespace Funny
                                 int index = header.indexOf("GET /color/") + 11;
                                 int end_index = header.indexOf(" ", index);
                                 String color = header.substring(index, end_index);
+                                LOGF_INFO(
+                                    "color  ( %s)\r\n",
+                                    color
+                                   );
                                 eye_color = color.toInt();
+                                   LOGF_INFO(
+                                    "parsed ( %d)\r\n",
+                                    eye_color
+                                   );
                             }
 
                             // turns the GPIOs on and off
@@ -300,11 +311,14 @@ namespace Funny
             const color = e.target.value;
             console.log(color);
 
-            const hsl = hexToHSL(color);
+            let hsl = hexToHSL(color);
+
+            let out = Math.ceil((hsl/360) * 255) ;
+
             console.log(hsl);
             // GET ?
             // Yes I know I'm lazy
-            fetch(`${window.location.origin}/color/${hsl}`)
+            fetch(`${window.location.origin}/color/${out}`)
                 .then(response => {
                     console.log(response);
                     current.style.backgroundColor = `hsl(${hsl}, 50%, 50%)`;
@@ -321,7 +335,7 @@ namespace Funny
         fetch(`${window.location.origin}/color`)
             .then(response => response.text())
             .then(hsl => {
-                current.style.backgroundColor = `hsl(${hsl}, 50%, 50%)`;
+                current.style.backgroundColor = `hsl(${Math.ceil(hsl/255*360)}, 50%, 50%)`;
             })
             .catch(error => {
                 console.error(error);
