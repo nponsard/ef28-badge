@@ -1,7 +1,7 @@
 // MIT License
 //
-// Copyright 2024 Eurofurence e.V. 
-// 
+// Copyright 2024 Eurofurence e.V.
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the “Software”),
 // to deal in the Software without restriction, including without limitation
@@ -76,13 +76,13 @@ void update_bar_to_reflect_consensus(){
 	int ledIndex = 0;
 	for (int i = 0; i < NUM_HUES; i++) {
 		int num_leds_for_color = (int)(((float)hue_consensus[i] * 11.0f) / (float)total_sum);
-		
+
 		for (int j = 0; j < num_leds_for_color && ledIndex < 11; j++) {
 			bar[ledIndex] = CHSV(rainbow[i], 255, 255);
 			ledIndex++;
 		}
 	}
-	
+
 	while (ledIndex < 11) {
 		bar[ledIndex] = CHSV(0,0,0);
 		ledIndex++;
@@ -110,7 +110,7 @@ void incomingDataCallback(uint32_t from, String &msg) {
 	}
 
 	refresh_happen = 0;
-	
+
 	update_bar_to_reflect_consensus();
 
 }
@@ -122,7 +122,7 @@ void changedConnectionCallback() {}
 void nodeTimeAdjustedCallback(int32_t offset) {}
 
 void gameLoop() {
-	
+
 	//Copy and sort hues
 	//memcpy(hues_sorted, hues, sizeof(hues));
 	//std::sort(hues_sorted, hues_sorted + NUM_HUES);
@@ -203,7 +203,7 @@ void GameHuemesh::run() {
 	  CRGB::Black,
 	  CRGB::Black
 	};
-	
+
 	if(edit_happen < 12){
 		std::rotate(dragon.begin(), dragon.begin() + this->tick % EFLED_DRAGON_NUM, dragon.end());
 		edit_happen++;
@@ -217,7 +217,7 @@ void GameHuemesh::run() {
 			CRGB::Black
 		};
 	}
-	
+
 	/*
 	if(refresh_happen < 11){
 		std::rotate(bar.begin(), bar.begin() + this->tick % 11, bar.end());
@@ -273,9 +273,9 @@ std::unique_ptr<FSMState> GameHuemesh::touchEventNoseRelease() {
 	if(hue_consensus[own_hue] < 254){
 		hue_consensus[own_hue]++;
 	}
-	
+
 	update_bar_to_reflect_consensus();
-	
+
 	edit_happen = 0;
 	return nullptr;
 }

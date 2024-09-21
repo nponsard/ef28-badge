@@ -1,7 +1,7 @@
 // MIT License
 //
-// Copyright 2024 Eurofurence e.V. 
-// 
+// Copyright 2024 Eurofurence e.V.
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the “Software”),
 // to deal in the Software without restriction, including without limitation
@@ -54,7 +54,7 @@ void FSM::resume() {
 
     // Restore LED brightness setting
     EFLed.setBrightnessPercent(this->globals->ledBrightnessPercent);
-    
+
     // Resume last remembered state
     switch (this->globals->resumeStateIdx) {
         case 0: this->transition(std::make_unique<DisplayPrideFlag>()); break;
@@ -64,6 +64,7 @@ void FSM::resume() {
         case 4: this->transition(std::make_unique<AnimateHeartbeat>()); break;
 		case 6: this->transition(std::make_unique<GameHuemesh>()); break;
 		case 7: this->transition(std::make_unique<VUMeter>()); break;
+        case 8: this->transition(std::make_unique<Funny::Funny>()); break;
         default:
             LOGF_WARNING("(FSM) Failed to resume to unknown state: %d\r\n", this->globals->resumeStateIdx);
             this->transition(std::make_unique<DisplayPrideFlag>());
@@ -210,7 +211,7 @@ void FSM::handle(unsigned int num_events) {
             default:
                 LOGF_WARNING("(FSM) Failed to handle unknown event: %d\r\n", event);
                 return;
-        } 
+        }
 
         // Handle state transition
         if (next != nullptr) {

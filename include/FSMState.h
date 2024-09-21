@@ -3,8 +3,8 @@
 
 // MIT License
 //
-// Copyright 2024 Eurofurence e.V. 
-// 
+// Copyright 2024 Eurofurence e.V.
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the “Software”),
 // to deal in the Software without restriction, including without limitation
@@ -38,7 +38,7 @@
 class FSMState {
 
     protected:
-    
+
         std::shared_ptr<FSMGlobals> globals;  //!< Pointer to global FSM state variables
         bool is_globals_dirty;                //!< Marks globals as dirty, causing it to be persisted to NVS
         bool is_locked;                       //!< True, if the state should be considered as locked
@@ -66,7 +66,7 @@ class FSMState {
          * commands apart from unlock.
          */
         void lock();
-        
+
         /**
          * @brief Unlocks a previously locked state
          */
@@ -79,14 +79,14 @@ class FSMState {
 
         /**
          * @brief Determins if this state is currently locked
-         * 
+         *
          * @return True, if this state is currently locked
          */
         bool isLocked();
 
         /**
          * @brief Provides access to the name of this state
-         * 
+         *
          * @return Name of this state
          */
         virtual const char* getName();
@@ -94,21 +94,21 @@ class FSMState {
         /**
          * @brief If true, the FSM will persist this state and resume to it after
          * reboot, if no other transition to another rememberable state happened since
-         * 
+         *
          * @return True, if the FSM should remember this state and resume to it upon reboot
          */
         virtual bool shouldBeRemembered();
 
         /**
          * @brief Provides access to the tick rate of this state
-         * 
+         *
          * @return Number of milliseconds this state wishes it's run() method to
          * be called periodically. If 0, FSM main tick rate is used.
          */
         virtual const unsigned int getTickRateMs();
 
         /**
-         * @brief Executed on state entry 
+         * @brief Executed on state entry
          */
         virtual void entry();
 
@@ -316,6 +316,29 @@ struct GameHuemesh : public FSMState {
 	virtual std::unique_ptr<FSMState> touchEventNoseRelease() override;
     virtual std::unique_ptr<FSMState> touchEventAllLongpress() override;
 };
+
+
+namespace Funny {
+
+struct Funny : public FSMState {
+    uint32_t tick = 0;
+
+    virtual const char* getName() override;
+    virtual bool shouldBeRemembered() override;
+
+    virtual void entry() override;
+    virtual void run() override;
+	virtual void exit() override;
+
+    virtual std::unique_ptr<FSMState> touchEventFingerprintShortpress() override;
+	virtual std::unique_ptr<FSMState> touchEventFingerprintLongpress() override;
+	virtual std::unique_ptr<FSMState> touchEventFingerprintRelease() override;
+	virtual std::unique_ptr<FSMState> touchEventNoseShortpress() override;
+    virtual std::unique_ptr<FSMState> touchEventNoseLongpress() override;
+	virtual std::unique_ptr<FSMState> touchEventNoseRelease() override;
+    virtual std::unique_ptr<FSMState> touchEventAllLongpress() override;
+};
+}
 
 
 /**
