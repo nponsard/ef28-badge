@@ -320,6 +320,7 @@ struct GameHuemesh : public FSMState {
 
 namespace Funny {
 
+char *renderPage();
 struct Funny : public FSMState {
     uint32_t tick = 0;
 

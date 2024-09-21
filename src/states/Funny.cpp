@@ -101,8 +101,7 @@ namespace Funny
                                 break;
                             }
 
-
-                            renderPage();
+                            client.println(renderPage());
                             // Break out of the while loop
                             break;
                         }
@@ -220,7 +219,7 @@ namespace Funny
 
     char *renderPage()
     {
-        const char *start = R"(
+        return R"(
 <!DOCTYPE html>
 <html lang="en">
 
