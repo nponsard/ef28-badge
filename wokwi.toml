@@ -1,0 +1,5 @@
+[wokwi]
+version = 1
+gdbServerPort = 3333
+elf = "target/xtensa-esp32s3-espidf/debug/ef28-badge-rust"
+firmware = "target/xtensa-esp32s3-espidf/debug/ef28-badge-rust"
