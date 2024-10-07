@@ -5,7 +5,7 @@ use esp_backtrace as _;
 use esp_hal::{
     clock::ClockControl,
     delay::Delay,
-    gpio::{rtc_io::LowPowerOutput, Io},
+    gpio::{rtc_io::LowPowerOutput, Io, Level, Output},
     peripherals::Peripherals,
     prelude::*,
     system::SystemControl,
@@ -49,29 +49,29 @@ fn main() -> ! {
     )
     .unwrap();
 
-    // let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
-    // let pin = LowPowerOutput::new(io.pins.gpio1);
+    let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
+    let mut led = Output::new(io.pins.gpio9, Level::High);
+    led.set_high();
+    let pin = LowPowerOutput::new(io.pins.gpio21);
 
     let mut ulp_core = ulp_core::UlpCore::new(peripherals.ULP_RISCV_CORE);
 
     ulp_core.stop();
-    log::info!("ulp core stopped");
+    log::info!("ulp core stopped ?");
 
     // load code to LP core
     let lp_core_code =
         load_lp_code!("../coprocessor/target/riscv32imc-unknown-none-elf/release/coprocessor");
 
     // start LP core
-    lp_core_code.run(&mut ulp_core, ulp_core::UlpCoreWakeupSource::HpCpu);
-    info!("ulpcore run");
+    lp_core_code.run(&mut ulp_core, ulp_core::UlpCoreWakeupSource::HpCpu, pin);
+    info!("ulpcore run aa");
 
     let data = (0x5000_0400) as *mut u32;
     loop {
-        info!("Current {:x}           \u{000d}", unsafe {
+        info!("Current aaa {}", unsafe {
             data.read_volatile()
         });
-        delay.delay_millis(1000);
+        delay.delay_millis(10);
     }
-
-
 }
