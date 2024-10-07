@@ -18,4 +18,4 @@ case "$1" in
     ;;
 esac
 
-web-flash --chip esp32s3 target/xtensa-esp32s3-espidf/${BUILD_MODE}/ef28-badge-rust
+web-flash --chip esp32s3 target/xtensa-esp32s3-none-elf/${BUILD_MODE}/ef_28_badge_no_std

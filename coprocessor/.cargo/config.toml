@@ -1,0 +1,10 @@
+[build]
+target = "riscv32imc-unknown-none-elf"
+
+[target.'cfg(target_arch = "riscv32")']
+rustflags = [
+  "-C", "link-arg=-Tlink.x",
+]
+
+[unstable]
+build-std = ["core"]

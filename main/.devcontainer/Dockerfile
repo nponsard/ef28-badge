@@ -1,3 +1,4 @@
+# Base image
 ARG VARIANT=bookworm-slim
 FROM debian:${VARIANT}
 ENV DEBIAN_FRONTEND=noninteractive
@@ -12,8 +13,8 @@ ARG GITHUB_TOKEN
 
 # Install dependencies
 RUN apt-get update \
-    && apt-get install -y pkg-config curl gcc clang libudev-dev unzip xz-utils \
-    git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0 \
+    && apt-get install -y git curl llvm-dev libclang-dev clang unzip \
+    libusb-1.0-0 libssl-dev libudev-dev pkg-config \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
 
 # Set users
@@ -40,10 +41,6 @@ RUN ARCH=$($HOME/.cargo/bin/rustup show | grep "Default host" | sed -e 's/.* //'
     unzip "${HOME}/.cargo/bin/espflash.zip" -d "${HOME}/.cargo/bin/" && \
     rm "${HOME}/.cargo/bin/espflash.zip" && \
     chmod u+x "${HOME}/.cargo/bin/espflash" && \
-    curl -L "https://github.com/esp-rs/embuild/releases/latest/download/ldproxy-${ARCH}.zip" -o "${HOME}/.cargo/bin/ldproxy.zip" && \
-    unzip "${HOME}/.cargo/bin/ldproxy.zip" -d "${HOME}/.cargo/bin/" && \
-    rm "${HOME}/.cargo/bin/ldproxy.zip" && \
-    chmod u+x "${HOME}/.cargo/bin/ldproxy" && \
     curl -L "https://github.com/esp-rs/esp-web-flash-server/releases/latest/download/web-flash-${ARCH}.zip" -o "${HOME}/.cargo/bin/web-flash.zip" && \
     unzip "${HOME}/.cargo/bin/web-flash.zip" -d "${HOME}/.cargo/bin/" && \
     rm "${HOME}/.cargo/bin/web-flash.zip" && \
@@ -58,7 +55,6 @@ RUN if [ -n "${GITHUB_TOKEN}" ]; then export GITHUB_TOKEN=${GITHUB_TOKEN}; fi  \
 
 # Set default toolchain
 RUN rustup default esp
-
 
 # Activate ESP environment
 RUN echo "source /home/${CONTAINER_USER}/export-esp.sh" >> ~/.bashrc

@@ -1,0 +1,14 @@
+[package]
+name = "coprocessor"
+version = "0.1.0"
+edition = "2021"
+
+[build]
+target = "riscv32imc-unknown-none-elf"
+
+[dependencies]
+panic-halt = "0.2.0"
+esp-lp-hal = {version = "0.1.0",  features = ["esp32s3"]}
+embedded-hal = {version = "1.0.0"}
+
+[dev-dependencies]

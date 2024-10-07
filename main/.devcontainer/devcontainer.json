@@ -1,6 +1,6 @@
 {
-  "name": "ef28_badge_rust",
-  // Select between image and build propieties to pull or build the image.
+  "name": "ef_28_badge_no_std",
+  // Select between image and build properties to pull or build the image.
   // "image": "docker.io/espressif/idf-rust:esp32s3_latest",
   "build": {
     "dockerfile": "Dockerfile",
@@ -10,11 +10,6 @@
       "ESP_BOARD": "esp32s3"
     }
   },
-  // https://github.com/serialport/serialport-rs/issues/153
-  "runArgs": [
-    "--mount",
-    "type=bind,source=/run/udev,target=/run/udev,readonly"
-  ],
   "customizations": {
     "vscode": {
       "settings": {
@@ -45,9 +40,9 @@
     }
   },
   "forwardPorts": [
-    3333,
-    8000
+    8000,
+    3333
   ],
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/esp/ef28_badge_rust,type=bind,consistency=cached",
-  "workspaceFolder": "/home/esp/ef28_badge_rust"
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/esp/ef_28_badge_no_std,type=bind,consistency=cached",
+  "workspaceFolder": "/home/esp/ef_28_badge_no_std"
 }
