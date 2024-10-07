@@ -20,6 +20,8 @@ pub enum EFLedError {
     Ws2812(#[from] Ws2812Esp32RmtDriverError),
     #[error("Esp error : {0}")]
     Esp(#[from] EspError),
+    #[error("Led index invalid (0-16")]
+    LedIndexInvalid,
 }
 
 pub struct EFLed<'a, BoostPin: Pin> {
@@ -32,8 +34,8 @@ pub struct EFLed<'a, BoostPin: Pin> {
 
 impl<'a, BoostPin: Pin> EFLed<'a, BoostPin> {
     pub fn try_init(
-        channel: impl Peripheral<P = impl RmtChannel> + 'a,
-        pin: impl Peripheral<P = impl OutputPin> + 'a,
+        channel: impl Peripheral<P=impl RmtChannel> + 'a,
+        pin: impl Peripheral<P=impl OutputPin> + 'a,
         boost_pin: PinDriver<'a, BoostPin, Output>,
     ) -> Result<Self, Ws2812Esp32RmtDriverError> {
         Ok(EFLed {
@@ -52,7 +54,7 @@ impl<'a, BoostPin: Pin> EFLed<'a, BoostPin> {
         Ok(())
     }
 
-    pub fn turn_off(&mut self) -> Result<(),EFLedError>
+    pub fn turn_off(&mut self) -> Result<(), EFLedError>
     {
         self.boost_pin_driver.set_low()?;
         self.powered = false;
@@ -68,13 +70,27 @@ impl<'a, BoostPin: Pin> EFLed<'a, BoostPin> {
     }
 
     pub fn fill(&mut self, col: RGB8) -> Result<(), EFLedError> {
-        info!("fill : {:?}", col);
         self.leds = [col; LED_COUNT];
         self.write_state()
     }
+
+    pub fn set_led_color(&mut self, index: usize, color: RGB8) -> Result<(), EFLedError> {
+        if index >= LED_COUNT {
+            return Err(EFLedError::LedIndexInvalid);
+        }
+        self.leds[index] = color;
+        self.write_state()?;
+        Ok(())
+    }
+
+    pub fn set_leds_color(&mut self, array: [RGB8; LED_COUNT]) -> Result<(), EFLedError> {
+        self.leds = array;
+        self.write_state()
+    }
+
+
     pub fn write_state(&mut self) -> Result<(), EFLedError> {
         let transformed = apply_intensity(&self.intensity, &self.leds);
-        log::info!("transformed : {:?}", transformed);
         self.ws2812.write(transformed.into_iter())?;
         Ok(())
     }
