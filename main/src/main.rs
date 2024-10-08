@@ -1,15 +1,19 @@
 #![no_std]
 #![no_main]
-
+use alloc::vec;
+use embedded_hal::spi::SpiBus;
 use esp_backtrace as _;
+use esp_hal::gpio::rtc_io::LowPowerOutput;
+use esp_hal::prelude::_fugit_RateExtU32;
+use esp_hal::spi::SpiBitOrder;
+use esp_hal::uart::config::Config;
 use esp_hal::{
     clock::ClockControl,
     delay::Delay,
-    gpio::{rtc_io::LowPowerOutput, Io, Level, Output},
+    gpio::{Io, Level, Output},
     peripherals::Peripherals,
     prelude::*,
     system::SystemControl,
-    ulp_core,
 };
 use log::info;
 
@@ -33,7 +37,7 @@ fn main() -> ! {
     let peripherals = Peripherals::take();
     let system = SystemControl::new(peripherals.SYSTEM);
 
-    let clocks = ClockControl::max(system.clock_control).freeze();
+    let mut clocks = ClockControl::max(system.clock_control).freeze();
     let delay = Delay::new(&clocks);
     init_heap();
 
@@ -49,29 +53,59 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
-    let mut led = Output::new(io.pins.gpio9, Level::High);
-    led.set_high();
+    let io: Io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
+
+    let boost = LowPowerOutput::new(io.pins.gpio9);
     let pin = LowPowerOutput::new(io.pins.gpio21);
 
-    let mut ulp_core = ulp_core::UlpCore::new(peripherals.ULP_RISCV_CORE);
+    let mut ulp_core = esp_hal::ulp_core::UlpCore::new(peripherals.ULP_RISCV_CORE);
 
     ulp_core.stop();
-    log::info!("ulp core stopped ?");
+    info!("ulp core stopped");
+
+    // boost.set_high();
+
+    // let mut spi = esp_hal::spi::master::Spi::new(
+    //     peripherals.SPI2,
+    //     5.MHz(),
+    //     esp_hal::spi::SpiMode::Mode0,
+    //     &clocks,
+    // )
+    // .with_bit_order(SpiBitOrder::MSBFirst, SpiBitOrder::MSBFirst)
+    // .with_mosi(io.pins.gpio21);
 
     // load code to LP core
     let lp_core_code =
         load_lp_code!("../coprocessor/target/riscv32imc-unknown-none-elf/release/coprocessor");
 
     // start LP core
-    lp_core_code.run(&mut ulp_core, ulp_core::UlpCoreWakeupSource::HpCpu, pin);
-    info!("ulpcore run aa");
+    lp_core_code.run(
+        &mut ulp_core,
+        esp_hal::ulp_core::UlpCoreWakeupSource::HpCpu,
+        pin,
+        boost,
+    );
+    info!("ulpcore run");
 
-    let data = (0x5000_0400) as *mut u32;
-    loop {
-        info!("Current aaa {}", unsafe {
-            data.read_volatile()
-        });
-        delay.delay_millis(2900);
+    let data = (0x5000_0020) as *mut u32;
+    loop {  
+        info!("Current           {}", unsafe { data.read_volatile() });
+        // spi.write(&[
+        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
+        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
+        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
+        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
+        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
+        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
+        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
+        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
+        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
+        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
+        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
+        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
+        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
+        // ]);
+        // spi.flush();
+        delay.delay_millis(300);
     }
 }

@@ -249,6 +249,7 @@ dependencies = [
 name = "ef-28-badge-no-std"
 version = "0.1.0"
 dependencies = [
+ "embedded-hal 1.0.0",
  "embedded-io",
  "esp-alloc",
  "esp-backtrace",
@@ -506,9 +507,9 @@ dependencies = [
 
 [[package]]
 name = "esp-wifi"
-version = "0.8.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d97f76de64be01a074dec52112656cf656c05657ce5dc3fc5b376b7f06958130"
+checksum = "ae0bce12453e0912ae595bb019d3c88576cf396aad1194e46235a0596c8db3d7"
 dependencies = [
  "atomic-waker",
  "cfg-if",
@@ -537,9 +538,9 @@ dependencies = [
 
 [[package]]
 name = "esp-wifi-sys"
-version = "0.4.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1829bd8c63b22a6d8a5485203a6e6bdc008897d9ee687aa6df8b57d2103a48d2"
+checksum = "a1a597f11c115df19df85bb38456ebf61c08400e254afe9244c542f702c7f744"
 dependencies = [
  "anyhow",
 ]

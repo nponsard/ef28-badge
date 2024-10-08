@@ -3,12 +3,19 @@ name = "coprocessor"
 version = "0.1.0"
 edition = "2021"
 
-[build]
-target = "riscv32imc-unknown-none-elf"
+
+[profile.release]
+codegen-units = 1        # LLVM can perform better optimizations using a single thread
+debug = 0
+debug-assertions = false
+incremental = false
+lto = 'fat'
+opt-level = 's'
+overflow-checks = false
 
 [dependencies]
 panic-halt = "0.2.0"
-esp-lp-hal = {version = "0.1.0",  features = ["esp32s3"]}
-embedded-hal = {version = "1.0.0"}
+esp-lp-hal = { version = "0.1.0", features = ["esp32s3"] }
+embedded-hal = { version = "1.0.0" }
 
 [dev-dependencies]
