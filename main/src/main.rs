@@ -72,6 +72,6 @@ fn main() -> ! {
         info!("Current aaa {}", unsafe {
             data.read_volatile()
         });
-        delay.delay_millis(10);
+        delay.delay_millis(2900);
     }
 }
