@@ -8,50 +8,31 @@ use panic_halt as _;
 
 const ADDRESS: u32 = 0x20;
 
-// #define EFLED_PIN_LED_DATA 21
-// #define EFLED_PIN_5VBOOST_ENABLE 9
-
-// NOP :
-// 0001
-// ON :
-// 40c5a223
-// OFF :
-// 40c5a423
-// Ret :
-// 8082
-
-//65a9                	lui	a1,0xa
-//80 00 0637          	lui	a2,0x80000
-
 const T0H: u8 = 0;
 const T1H: u8 = 2;
 const T0L: u8 = 4;
 const T1L: u8 = 2;
 
-const LED_COUNT: usize = 13;
+const LED_COUNT: usize = 17;
 
 // 17 leds
 // 24 bits per led
 // 16 bytes to encode 1 bit
-// we need approx 6.5k
-const ICOUNT: usize = 5400;
+// we need approx 5k
+const ICOUNT: usize = 4908;
 
-// 40c5a223
+// c1d0                    sw      a2,4(a1)
 pub fn turn_on(buffer: &mut [u8], pointer: &mut usize) {
-    buffer[*pointer] = 0x23;
-    buffer[*pointer + 1] = 0xa2;
-    buffer[*pointer + 2] = 0xc5;
-    buffer[*pointer + 3] = 0x40;
-    *pointer += 4;
+    buffer[*pointer] = 0xd0;
+    buffer[*pointer + 1] = 0xc1;
+    *pointer += 2;
 }
 
-// 40c5a423
+// c590                    sw      a2,8(a1)
 pub fn turn_off(buffer: &mut [u8], pointer: &mut usize) {
-    buffer[*pointer] = 0x23;
-    buffer[*pointer + 1] = 0xa4;
-    buffer[*pointer + 2] = 0xc5;
-    buffer[*pointer + 3] = 0x40;
-    *pointer += 4;
+    buffer[*pointer] = 0x90;
+    buffer[*pointer + 1] = 0xc5;
+    *pointer += 2;
 }
 
 // has been re-reverted
@@ -91,10 +72,18 @@ pub fn ret(buffer: &mut [u8], pointer: &mut usize) {
 }
 
 pub fn configure_registers(buffer: &mut [u8], pointer: &mut usize) {
-    //65a9 lui	        a1,0xa
+    // 65a9 lui	        a1,0xa
     buffer[*pointer] = 0xa9;
     buffer[*pointer + 1] = 0x65;
     *pointer += 2;
+
+    // so we can use a compressed sw in turn_on and turn_off
+    // 40058593                addi    a1,a1,1024
+    buffer[*pointer] = 0x93;
+    buffer[*pointer + 1] = 0x85;
+    buffer[*pointer + 2] = 0x05;
+    buffer[*pointer + 3] = 0x40;
+    *pointer += 4;
 
     //80 00 06 37       lui	a2,0x80000
     buffer[*pointer] = 0x37;
@@ -273,10 +262,10 @@ fn main(mut gpio21: Output<21>, mut gpio9: Output<9>) -> ! {
                     RGB { r: i, g: 0, b: 0 },
                     RGB { r: i, g: 0, b: 0 },
                     RGB { r: i, g: 0, b: 0 },
-                    // RGB { r: i, g: 0, b: 0 },
-                    // RGB { r: i, g: 0, b: 0 },
-                    // RGB { r: i, g: 0, b: 0 },
-                    // RGB { r: i, g: 0, b: 0 },
+                    RGB { r: i, g: 0, b: 0 },
+                    RGB { r: i, g: 0, b: 0 },
+                    RGB { r: i, g: 0, b: 0 },
+                    RGB { r: i, g: 0, b: 0 },
                 ],
             );
             Delay.delay_millis(10);
@@ -302,10 +291,10 @@ fn main(mut gpio21: Output<21>, mut gpio9: Output<9>) -> ! {
                     RGB { r: 0, g: i, b: 0 },
                     RGB { r: 0, g: i, b: 0 },
                     RGB { r: 0, g: i, b: 0 },
-                    // RGB { r: 0, g: i, b: 0 },
-                    // RGB { r: 0, g: i, b: 0 },
-                    // RGB { r: 0, g: i, b: 0 },
-                    // RGB { r: 0, g: i, b: 0 },
+                    RGB { r: 0, g: i, b: 0 },
+                    RGB { r: 0, g: i, b: 0 },
+                    RGB { r: 0, g: i, b: 0 },
+                    RGB { r: 0, g: i, b: 0 },
                 ],
             );
             Delay.delay_millis(10);
@@ -328,10 +317,10 @@ fn main(mut gpio21: Output<21>, mut gpio9: Output<9>) -> ! {
                     RGB { r: 0, g: 0, b: i },
                     RGB { r: 0, g: 0, b: i },
                     RGB { r: 0, g: 0, b: i },
-                    // RGB { r: 0, g: 0, b: i },
-                    // RGB { r: 0, g: 0, b: i },
-                    // RGB { r: 0, g: 0, b: i },
-                    // RGB { r: 0, g: 0, b: i },
+                    RGB { r: 0, g: 0, b: i },
+                    RGB { r: 0, g: 0, b: i },
+                    RGB { r: 0, g: 0, b: i },
+                    RGB { r: 0, g: 0, b: i },
                 ],
             );
             Delay.delay_millis(10);

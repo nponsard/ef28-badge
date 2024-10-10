@@ -89,7 +89,7 @@ fn main() -> ! {
 
     let data = (0x5000_0020) as *mut u32;
     loop {  
-        info!("Current           {}", unsafe { data.read_volatile() });
+        info!("Current      {}", unsafe { data.read_volatile() });
         // spi.write(&[
         //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
         //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
