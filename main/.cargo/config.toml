@@ -9,7 +9,6 @@ ESP_LOGLEVEL="INFO"
 rustflags = [
   "-C", "link-arg=-nostartfiles",
 ]
-
 target = "xtensa-esp32s3-none-elf"
 
 [unstable]

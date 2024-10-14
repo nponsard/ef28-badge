@@ -8,10 +8,6 @@ authors = ["Nils Ponsard <nilsponsard@gmail.com>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
-
-[build]
-
-
 [dependencies]
 esp-backtrace = { version = "0.14.0", features = [
     "esp32s3",
@@ -56,7 +52,3 @@ incremental = false
 lto = 'fat'
 opt-level = 's'
 overflow-checks = false
-
-
-[unstable]
-build-std = ["alloc", "core"]

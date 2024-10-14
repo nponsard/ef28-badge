@@ -1,18 +1,10 @@
 #![no_std]
 #![no_main]
-use alloc::vec;
-use embedded_hal::spi::SpiBus;
 use esp_backtrace as _;
 use esp_hal::gpio::rtc_io::LowPowerOutput;
-use esp_hal::prelude::_fugit_RateExtU32;
-use esp_hal::spi::SpiBitOrder;
-use esp_hal::uart::config::Config;
+
 use esp_hal::{
-    clock::ClockControl,
-    delay::Delay,
-    gpio::{Io, Level, Output},
-    peripherals::Peripherals,
-    prelude::*,
+    clock::ClockControl, delay::Delay, gpio::Io, peripherals::Peripherals, prelude::*,
     system::SystemControl,
 };
 use log::info;
@@ -37,7 +29,7 @@ fn main() -> ! {
     let peripherals = Peripherals::take();
     let system = SystemControl::new(peripherals.SYSTEM);
 
-    let mut clocks = ClockControl::max(system.clock_control).freeze();
+    let clocks = ClockControl::max(system.clock_control).freeze();
     let delay = Delay::new(&clocks);
     init_heap();
 
@@ -63,17 +55,6 @@ fn main() -> ! {
     ulp_core.stop();
     info!("ulp core stopped");
 
-    // boost.set_high();
-
-    // let mut spi = esp_hal::spi::master::Spi::new(
-    //     peripherals.SPI2,
-    //     5.MHz(),
-    //     esp_hal::spi::SpiMode::Mode0,
-    //     &clocks,
-    // )
-    // .with_bit_order(SpiBitOrder::MSBFirst, SpiBitOrder::MSBFirst)
-    // .with_mosi(io.pins.gpio21);
-
     // load code to LP core
     let lp_core_code =
         load_lp_code!("../coprocessor/target/riscv32imc-unknown-none-elf/release/coprocessor");
@@ -88,24 +69,8 @@ fn main() -> ! {
     info!("ulpcore run");
 
     let data = (0x5000_0020) as *mut u32;
-    loop {  
-        info!("Current      {}", unsafe { data.read_volatile() });
-        // spi.write(&[
-        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
-        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
-        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
-        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
-        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
-        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
-        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
-        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
-        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
-        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011,
-        //     0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101,
-        //     0b10110110, 0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
-        //     0b11011011, 0b01101101, 0b10110110, 0b11011011, 0b01101101, 0b10110110,
-        // ]);
-        // spi.flush();
+    loop {
+        info!("Current debug code {}", unsafe { data.read_volatile() });
         delay.delay_millis(300);
     }
 }
