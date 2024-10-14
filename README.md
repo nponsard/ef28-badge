@@ -1,83 +1,45 @@
-# ef_28_badge_no_std
+# Embedded Rust on the Eurofurence 28 LED badge
 
-## Dev Containers
-This repository offers Dev Containers supports for:
--  [VS Code Dev Containers](https://code.visualstudio.com/docs/remote/containers#_quick-start-open-an-existing-folder-in-a-container)
--  [GitHub Codespaces](https://docs.github.com/en/codespaces/developing-in-codespaces/creating-a-codespace)
-> **Note**
->
-> In [order to use GitHub Codespaces](https://github.com/features/codespaces#faq)
-> the project needs to be published in a GitHub repository and the user needs
-> to be part of the Codespaces beta or have the project under an organization.
+This fork/branch contains the firmware I wrode in embedded rust for the EF28 badge.
 
-If using VS Code or GitHub Codespaces, you can pull the image instead of building it
-from the Dockerfile by selecting the `image` property instead of `build` in
-`.devcontainer/devcontainer.json`. Further customization of the Dev Container can
-be achieved, see [`.devcontainer.json` reference](https://code.visualstudio.com/docs/remote/devcontainerjson-reference).
+## Setup
 
-When using Dev Containers, some tooling to facilitate building, flashing and
-simulating in Wokwi is also added.
-### Build
-- Terminal approach:
+Install the esp-rs development environment (risc-v and Xtensa targets) [https://docs.esp-rs.org/book/](https://docs.esp-rs.org/book/).
 
-    ```
-    scripts/build.sh  [debug | release]
-    ```
-    > If no argument is passed, `release` will be used as default
+Install the target for the risc-v coprocessor :
 
+```sh
+rustup target add riscv32imc-unknown-none-elf
+rustup toolchain install nightly
+```
 
--  UI approach:
+Don't forget to import the esp-rs environement variables each time before opening the project.
 
-    The default build task is already set to build the project, and it can be used
-    in VS Code and GH Codespaces:
-    - From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) (`Ctrl-Shift-P` or `Cmd-Shift-P`) run the `Tasks: Run Build Task` command.
-    - `Terminal`-> `Run Build Task` in the menu.
-    - With `Ctrl-Shift-B` or `Cmd-Shift-B`.
-    - From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) (`Ctrl-Shift-P` or `Cmd-Shift-P`) run the `Tasks: Run Task` command and
-    select `Build`.
-    - From UI: Press `Build` on the left side of the Status Bar.
+## Building
 
-### Flash
+First Build the coprocessor code :
 
-> **Note**
->
-> When using GitHub Codespaces, we need to make the ports
-> public, [see instructions](https://docs.github.com/en/codespaces/developing-in-codespaces/forwarding-ports-in-your-codespace#sharing-a-port).
+```sh
+cd coprocessor
+cargo build --release
+```
 
-- Terminal approach:
-  - Using `flash.sh` script:
+Then build the firmware :
 
-    ```
-    scripts/flash.sh [debug | release]
-    ```
-    > If no argument is passed, `release` will be used as default
+```sh
+cd main
+cargo build --release
+```
 
-- UI approach:
-    - From the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette) (`Ctrl-Shift-P` or `Cmd-Shift-P`) run the `Tasks: Run Task` command and
-    select `Build & Flash`.
-    - From UI: Press `Build & Flash` on the left side of the Status Bar.
-- Any alternative flashing method from host machine.
+I noticed that if you only make changes to the coprocessor code and build it, the change won't be detected in the main firmware code and rust will not try to re-build the firmware. To force the inclusion of the new coprocessor code you can either clean the build files with `cargo clean` and rebuild (slower) or edit one line of code in the `main/src/main.rs` file to trigger a rebuild of a minimal portion of the project.  
 
+## Flashing
 
-### Wokwi Simulation
+You need to have at least built the coprocessor code first.
 
-#### VS Code Dev Containers and GitHub Codespaces
+```sh
+cd main
+cargo run --release
+```
 
-The Dev Container includes the Wokwi Vs Code installed, hence you can simulate your built projects doing the following:
-1. Press `F1`
-2. Run `Wokwi: Start Simulator`
-
-> **Note**
->
->  We assume that the project is built in `debug` mode, if you want to simulate projects in release, please update the `elf` and  `firmware` proprieties in `wokwi.toml`.
-
-For more information and details on how to use the Wokwi extension, see [Getting Started] and [Debugging your code] Chapter of the Wokwi documentation.
-
-[Getting Started]: https://docs.wokwi.com/vscode/getting-started
-[Debugging your code]: https://docs.wokwi.com/vscode/debugging
-
-> **Warning**
->
->  ESP32-C2 is not, yet, not supported in Wokwi.
-
-
+This will build the firmware in release mode and upload it to the board connected via USB using `espflash`.
