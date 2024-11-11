@@ -171,7 +171,7 @@ impl CodeBuffer {
     }
 }
 
-pub fn run(gpio21: &mut Output<21>, colors_array: &LEDData) {
+pub fn run<const PIN: u8>(gpio21: &mut Output<PIN>, colors_array: &LEDData) {
     // ensure we start at low and we pause for enough time (RES)
     gpio21.set_output(false);
     Delay.delay_millis(1);
@@ -189,7 +189,7 @@ pub fn run(gpio21: &mut Output<21>, colors_array: &LEDData) {
     // return from the function
     buffer.ret();
     unsafe {
-        // use this to debug the size of the buffer
+        // use this to debug how many bytes are used in the buffer
         // ptr.write_volatile(pointer as u32);
         // Delay.delay_millis(1000);
 

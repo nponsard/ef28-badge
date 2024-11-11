@@ -3,6 +3,9 @@
 use esp_backtrace as _;
 use esp_hal::gpio::rtc_io::LowPowerOutput;
 
+use esp_hal::gpio::{Input, TouchPin};
+use esp_hal::rtc_cntl::sleep::WakeSource;
+use esp_hal::rtc_cntl::Rtc;
 use esp_hal::{
     clock::ClockControl, delay::Delay, gpio::Io, peripherals::Peripherals, prelude::*,
     system::SystemControl,
@@ -69,6 +72,10 @@ fn main() -> ! {
     info!("ulpcore run");
 
     let data = (0x5000_0020) as *mut u32;
+
+    // let mut rtc = Rtc::new(peripherals.LPWR);
+    // rtc.sleep_deep(&[&ULPWake {}, ]);
+
     loop {
         info!("Current debug code {}", unsafe { data.read_volatile() });
         delay.delay_millis(300);
