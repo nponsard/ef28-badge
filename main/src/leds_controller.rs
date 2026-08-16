@@ -72,12 +72,16 @@ impl LedSettings {
     }
 }
 
-pub async fn change_settings(mutation: fn(LedSettings) -> LedSettings) {
+pub async fn change_led_settings(mutation: fn(LedSettings) -> LedSettings) -> LedSettings {
     let mut guard = LOCAL_SETTINGS.lock().await;
 
     *guard = mutation(*guard);
 
     write_settings(&guard);
+    *guard
+}
+pub async fn current_led_settings() -> LedSettings {
+    *LOCAL_SETTINGS.lock().await
 }
 
 fn write_settings(led_settings: &LedSettings) {

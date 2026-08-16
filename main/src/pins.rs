@@ -9,7 +9,7 @@ ariel_os::hal::define_peripherals!(Ulp {
 
 ariel_os::hal::define_peripherals!(Buttons {
     right_button: GPIO8,
-    left_button: GPIO2,
+    left_button: GPIO47,
 });
 
 pub type EpdSpi = spi::main::SPI2;

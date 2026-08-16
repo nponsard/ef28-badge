@@ -1,4 +1,4 @@
-use ariel_os::log::info;
+use ariel_os::log::{debug, info};
 use embedded_graphics::{
     Drawable as _,
     draw_target::DrawTarget as _,
@@ -11,7 +11,7 @@ use u8g2_fonts::types::{FontColor, HorizontalAlignment, VerticalPosition};
 use crate::{
     buttons::{Button, wait_for_button_released},
     drawer::DisplayTarget,
-    leds_controller::change_settings,
+    leds_controller::change_led_settings,
     screens::{MEDIUM_SMALL_FONT, MENU_FONT, Screen},
 };
 
@@ -20,8 +20,6 @@ const HEADER_VERTICAL_PADDING: i32 = 30;
 const LIST_ELEMENT_HEIGHT: i32 = 20;
 
 fn draw_header(draw_target: &mut DisplayTarget<'_>, name: &str) {
-    info!("header: {}", name);
-
     let width = draw_target.bounding_box().size.width;
 
     MEDIUM_SMALL_FONT
@@ -35,8 +33,6 @@ fn draw_header(draw_target: &mut DisplayTarget<'_>, name: &str) {
         )
         .unwrap();
 
-    info!("line: {}", name);
-
     Line::new(Point::new(10, 16), Point::new((width - 10) as i32, 16))
         .into_styled(PrimitiveStyle::with_stroke(BinaryColor::Off, 1))
         .draw(draw_target)
@@ -44,7 +40,7 @@ fn draw_header(draw_target: &mut DisplayTarget<'_>, name: &str) {
 }
 
 fn draw_list_element(draw_target: &mut DisplayTarget<'_>, name: &str, selected: u8, index: u8) {
-    info!("list element: {}", name);
+    debug!("list element: {}", name);
     const SELECT_PADDING: i32 = 5;
 
     let y = HEADER_VERTICAL_PADDING + i32::from(index) * LIST_ELEMENT_HEIGHT;
@@ -120,7 +116,7 @@ pub async fn settings_led(draw_target: &mut DisplayTarget<'_>) -> Screen {
     loop {
         draw_target.clear(BinaryColor::On);
 
-        draw_header(draw_target, "Settings");
+        draw_header(draw_target, "Led Settings");
         draw_list_element(draw_target, "Decrease brightness", element_selected, 0);
         draw_list_element(draw_target, "Increase brightness", element_selected, 1);
         draw_list_element(draw_target, "Back", element_selected, 2);
@@ -131,20 +127,23 @@ pub async fn settings_led(draw_target: &mut DisplayTarget<'_>) -> Screen {
             Button::Left => element_selected = (element_selected + 1) % ELEMENTS_COUNT,
             Button::Right => match element_selected {
                 0 => {
-                    change_settings(|mut settings| {
+                    let settings = change_led_settings(|mut settings| {
                         settings.intensity =
-                            MIN_BRIGHTNESS.max(settings.intensity.saturating_sub(1));
+                            MIN_BRIGHTNESS.max(settings.intensity.saturating_sub(2));
+                        info!("setting brightness to {}", settings.intensity);
                         settings
                     })
                     .await;
+                    info!("setting brightness to {}", settings.intensity);
                 }
                 1 => {
-                    change_settings(|mut settings| {
+                    let settings = change_led_settings(|mut settings| {
                         settings.intensity =
-                            MAX_BRIGHTNESS.min(settings.intensity.saturating_add(1));
+                            MAX_BRIGHTNESS.min(settings.intensity.saturating_add(2));
                         settings
                     })
                     .await;
+                    info!("setting brightness to {}", settings.intensity);
                 }
                 2 => {
                     return Screen::SettingsMain;

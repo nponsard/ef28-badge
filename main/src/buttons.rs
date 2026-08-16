@@ -5,17 +5,17 @@
 
 use ariel_os::{
     gpio::{self, Level},
-    log::info,
-    time::{Duration, Instant},
+    log::{debug, info},
+    time::{Duration, Instant, Timer},
 };
-use embassy_futures::select::Either;
+use embassy_futures::select::{Either, Either4};
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
 
 use crate::pins;
 
 static BUTTON_CHANNEL: Channel<CriticalSectionRawMutex, Event, 10> = Channel::new();
 
-const DEBOUNCE_TIMEOUT: Duration = Duration::from_millis(5);
+const DEBOUNCE_TIME: Duration = Duration::from_millis(10);
 
 pub enum Button {
     Left,
@@ -52,46 +52,77 @@ async fn button_handler(peripherals: pins::Buttons) {
     let mut last_right_pressed = Instant::now();
 
     loop {
-        match embassy_futures::select::select(left.wait_for_any_edge(), right.wait_for_any_edge())
-            .await
+        match embassy_futures::select::select(
+            async {
+                loop {
+                    left.wait_for_rising_edge().await;
+                    match embassy_futures::select::select(
+                        Timer::after(DEBOUNCE_TIME),
+                        left.wait_for_any_edge(),
+                    )
+                    .await
+                    {
+                        Either::First(_) => return,
+                        Either::Second(_) => continue,
+                    };
+
+                    // Timer::after(DEBOUNCE_TIME).await;
+                    // if left.is_low() {
+                    //     continue;
+                    // }
+                    // Timer::after(DEBOUNCE_TIME).await;
+                    // if left.is_high() {
+                    //     return;
+                    // }
+                }
+            },
+            async {
+                loop {
+                    right.wait_for_rising_edge().await;
+                    match embassy_futures::select::select(
+                        Timer::after(DEBOUNCE_TIME),
+                        right.wait_for_any_edge(),
+                    )
+                    .await
+                    {
+                        Either::First(_) => return,
+                        Either::Second(_) => continue,
+                    };
+                }
+            },
+        )
+        .await
         {
             Either::First(_) => {
-                info!("Left button pressed");
-                if left.get_level() == Level::High {
-                    if last_left_pressed.elapsed() > DEBOUNCE_TIMEOUT {
-                        let _ = BUTTON_CHANNEL.try_send(Event::new(
-                            Button::Left,
-                            EventType::Released(last_left_pressed.elapsed()),
-                        ));
-                    }
-                    last_left_released = Instant::now();
-                } else {
-                    if last_left_released.elapsed() > DEBOUNCE_TIMEOUT {
-                        let _ =
-                            BUTTON_CHANNEL.try_send(Event::new(Button::Left, EventType::Pressed));
-                    }
-                    last_left_pressed = Instant::now();
-                }
-            }
-            Either::Second(_) => {
-                info!("Right button pressed");
+                info!("left released");
+                let _ = BUTTON_CHANNEL.try_send(Event::new(
+                    Button::Left,
+                    EventType::Released(last_left_released.elapsed()),
+                ));
 
-                if right.get_level() == Level::High {
-                    if last_right_pressed.elapsed() > DEBOUNCE_TIMEOUT {
-                        let _ = BUTTON_CHANNEL.try_send(Event::new(
-                            Button::Right,
-                            EventType::Released(last_right_pressed.elapsed()),
-                        ));
-                    }
-                    last_right_released = Instant::now();
-                } else {
-                    if last_right_released.elapsed() > DEBOUNCE_TIMEOUT {
-                        let _ =
-                            BUTTON_CHANNEL.try_send(Event::new(Button::Right, EventType::Pressed));
-                    }
-                    last_right_pressed = Instant::now();
-                }
+                last_left_released = Instant::now();
             }
+            // Either4::Second(()) => {
+            //     if last_left_released.elapsed() > DEBOUNCE_TIMEOUT {
+            //         let _ = BUTTON_CHANNEL.try_send(Event::new(Button::Left, EventType::Pressed));
+            //     }
+            //     last_left_pressed = Instant::now();
+            // }
+            Either::Second(_) => {
+                info!("right released");
+                // if last_right_released.elapsed() > DEBOUNCE_TIMEOUT {
+                let _ = BUTTON_CHANNEL.try_send(Event::new(
+                    Button::Right,
+                    EventType::Released(last_right_released.elapsed()),
+                ));
+
+                last_right_released = Instant::now();
+            } // Either4::Fourth(_) => {
+              //     if last_right_released.elapsed() > DEBOUNCE_TIMEOUT {
+              //         let _ = BUTTON_CHANNEL.try_send(Event::new(Button::Right, EventType::Pressed));
+              //     }
+              //     last_right_pressed = Instant::now();
+              // }
         };
     }
 }
