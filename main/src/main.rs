@@ -3,6 +3,7 @@
 
 mod drawer;
 mod pins;
+mod screens;
 
 use ariel_os::{
     gpio, hal,
@@ -10,13 +11,10 @@ use ariel_os::{
     spi::{self, main::SpiDevice},
     time::{Delay, Timer},
 };
+use drawer::{DisplayController, DisplayTarget};
 use embassy_sync::{
     blocking_mutex::raw::CriticalSectionRawMutex, mutex::Mutex, pubsub::PubSubChannel, watch::Watch,
 };
-use embedded_graphics::{pixelcolor::BinaryColor, prelude::DrawTarget};
-
-use drawer::{DisplayController, DisplayTarget};
-
 use esp_hal::{gpio::rtc_io::LowPowerOutput, load_lp_code};
 
 static WATCH: Watch<CriticalSectionRawMutex, [u8; 4736], 1> = Watch::new();
@@ -106,21 +104,7 @@ async fn screen(peripherals: pins::Epd) {
 
     let mut manager = DisplayController::new(epd_controller, receiver);
 
-    let mut draw_target = DisplayTarget::new(sender);
+    let draw_target = DisplayTarget::new(sender);
 
-    info!("entering main loop");
-
-    embassy_futures::join::join(manager.run(), async {
-        loop {
-            info!("Display loop");
-            // Off = black
-            draw_target.clear(BinaryColor::Off);
-            draw_target.flush();
-
-            Timer::after_millis(300).await;
-            draw_target.clear(BinaryColor::On);
-            draw_target.flush();
-        }
-    })
-    .await;
+    embassy_futures::join::join(manager.run(), screens::screen(draw_target)).await;
 }

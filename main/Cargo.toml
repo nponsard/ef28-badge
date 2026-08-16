@@ -25,6 +25,8 @@ tinybmp = "0.7.0"
 ssd1680-rs = { git = "https://github.com/nponsard/ssd1680-rs.git", features = [
   "async",
 ] }
+u8g2-fonts = "0.8.0"
+# tinyqoi = "0.2.0"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [

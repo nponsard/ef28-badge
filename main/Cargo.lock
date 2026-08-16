@@ -188,6 +188,7 @@ dependencies = [
  "once_cell",
  "ssd1680-rs",
  "tinybmp",
+ "u8g2-fonts",
 ]
 
 [[package]]
@@ -2883,6 +2884,15 @@ name = "typewit"
 version = "1.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8c1ae7cc0fdb8b842d65d127cb981574b0d2b249b74d1c7a2986863dc134f71"
+
+[[package]]
+name = "u8g2-fonts"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ce3199e4c7d98a0a47ddd5ae9cde5a4e944d316319e3208527de504f4e76032"
+dependencies = [
+ "embedded-graphics-core",
+]
 
 [[package]]
 name = "ufmt-write"

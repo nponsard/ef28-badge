@@ -2,9 +2,17 @@
 
 This fork/branch contains the firmware I wrode in embedded rust for the EF28 badge.
 
+## TODO
+
+- Settings menu: 
+  - led brightness 
+  - led pattern 
+  - Screen to display 
+- LED patterns 
+
 ## Setup
 
-Install the esp-rs development environment (risc-v and Xtensa targets) [https://docs.esp-rs.org/book/](https://docs.esp-rs.org/book/).
+Install the esp-rs development environment (risc-v and Xtensa targets) [https://docs.esp-rs.org/book/](https://docs.esp-rs.org/book/) and setup [Ariel OS](https://ariel-os.github.io/ariel-os/dev/docs/book/getting-started.html) 
 
 Install the target for the risc-v coprocessor :
 
@@ -28,7 +36,7 @@ Then build the firmware :
 
 ```sh
 cd main
-cargo build --release
+laze build
 ```
 
 I noticed that if you only make changes to the coprocessor code and build it, the change won't be detected in the main firmware code and rust will not try to re-build the firmware. To force the inclusion of the new coprocessor code you can either clean the build files with `cargo clean` and rebuild (slower) or edit one line of code in the `main/src/main.rs` file to trigger a rebuild of a minimal portion of the project.  
@@ -39,7 +47,7 @@ You need to have at least built the coprocessor code first.
 
 ```sh
 cd main
-cargo run --release
+laze build run
 ```
 
 This will build the firmware in release mode and upload it to the board connected via USB using `espflash`.

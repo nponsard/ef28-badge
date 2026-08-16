@@ -14,8 +14,8 @@ use ssd1680_rs::driver_async::SSD1680;
 
 use ariel_os::log::debug;
 
-pub const WIDTH: usize = 296;
-pub const HEIGHT: usize = 128;
+pub const WIDTH: usize = 128;
+pub const HEIGHT: usize = 296;
 
 pub const FRAME_BUFFER_SIZE: usize = (WIDTH * HEIGHT) / 8;
 pub type FrameBuffer = [u8; FRAME_BUFFER_SIZE];
@@ -128,10 +128,11 @@ impl<'a> DrawTarget for DisplayTarget<'a> {
         for Pixel(coord, color) in pixels {
             // Flipping and rotating the screen.
             // TODO: should be handled in the SSD1680 driver.
-            let x = (HEIGHT - 1) - coord.y as usize;
-            let y = coord.x as usize;
+            let y = (HEIGHT - 1) - coord.y as usize;
 
-            let index = y * HEIGHT / 8 + x / 8;
+            let x = (WIDTH - 1) - coord.x as usize;
+
+            let index = y * WIDTH / 8 + x / 8;
 
             if color == BinaryColor::On {
                 self.frame_buffer[index] |= 0x80 >> (x % 8);
