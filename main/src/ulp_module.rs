@@ -6,13 +6,11 @@ use crate::pins;
 const RTC_START: usize = 0x5000_0000;
 const RTC_LENGTH: usize = 8 * 1024;
 
-
 const SHARED_LENGTH: usize = 32;
 const SHARED_START: usize = RTC_START + RTC_LENGTH - SHARED_LENGTH;
 
-
-const DEBUG_WORD_ADDR : usize = SHARED_START;
-const DEBUG_WORD : *mut u32 = DEBUG_WORD_ADDR as *mut u32;
+const DEBUG_WORD_ADDR: usize = SHARED_START;
+const DEBUG_WORD: *mut u32 = DEBUG_WORD_ADDR as *mut u32;
 
 const SETTINGS_ADDR: usize = SHARED_START + 4;
 const SETTINGS: *mut u32 = SETTINGS_ADDR as *mut u32;
@@ -44,16 +42,30 @@ async fn ulp_setup(peripherals: pins::Ulp) {
     // let mut rtc = Rtc::new(peripherals.LPWR);
     // rtc.sleep_deep(&[&ULPWake {}, ]);
 
-    let mut intensity = 50;
+    let mut intensity = 20;
+    embassy_futures::join::join(
+        async {
+            loop {
+                unsafe {
+                    SETTINGS.write_volatile(intensity);
+                }
+                intensity += 5;
+                if intensity > 50 {
+                    intensity = 5;
+                }
 
-    loop {
-        unsafe {SETTINGS.write_volatile(intensity);}
-        intensity += 5;
-        if intensity > 60 {
-            intensity = 5;
-        }
-        info!("Current debug code {}", unsafe { DEBUG_WORD.read_volatile() });
-        // info!("Current debug code {}", unsafe { data.read_volatile() });
-        Timer::after_millis(300).await;
-    }
+                // info!("Current debug code {}", unsafe { data.read_volatile() });
+                Timer::after_secs(100).await;
+            }
+        },
+        async {
+            loop {
+                info!("Current debug code {}", unsafe {
+                    DEBUG_WORD.read_volatile()
+                });
+                 Timer::after_millis(50).await;
+            }
+        },
+    )
+    .await;
 }

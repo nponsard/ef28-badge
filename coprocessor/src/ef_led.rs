@@ -28,7 +28,8 @@ const T1L: u8 = 2;
 
 pub const LED_COUNT: usize = 17;
 pub type Rgb = (u8, u8, u8);
-pub type LEDData = [Rgb; LED_COUNT];
+
+pub type LedDataArr = [Rgb; LED_COUNT];
 
 // 17 leds
 // 24 bits per led
@@ -171,7 +172,7 @@ impl CodeBuffer {
     }
 }
 
-pub fn run<const PIN: u8>(gpio21: &mut Output<PIN>, colors_array: &LEDData) {
+pub fn run<'a, const PIN: u8>(gpio21: &mut Output<PIN>, colors_array: impl Iterator<Item = Rgb>) {
     // ensure we start at low and we pause for enough time (RES)
     gpio21.set_output(false);
     Delay.delay_millis(1);
@@ -182,8 +183,8 @@ pub fn run<const PIN: u8>(gpio21: &mut Output<PIN>, colors_array: &LEDData) {
 
     buffer.configure_registers();
 
-    for c in colors_array.iter() {
-        buffer.colors(c);
+    for c in colors_array {
+        buffer.colors(&c);
     }
 
     // return from the function
