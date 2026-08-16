@@ -4,59 +4,20 @@
 mod drawer;
 mod pins;
 mod screens;
+mod ulp_module;
 
 use ariel_os::{
     gpio, hal,
     log::info,
     spi::{self, main::SpiDevice},
-    time::{Delay, Timer},
+    time::Delay,
 };
 use drawer::{DisplayController, DisplayTarget};
 use embassy_sync::{
     blocking_mutex::raw::CriticalSectionRawMutex, mutex::Mutex, pubsub::PubSubChannel, watch::Watch,
 };
-use esp_hal::{gpio::rtc_io::LowPowerOutput, load_lp_code};
 
 static WATCH: Watch<CriticalSectionRawMutex, [u8; 4736], 1> = Watch::new();
-
-#[ariel_os::task(autostart, peripherals)]
-async fn main(peripherals: pins::Ulp) {
-    info!(
-        "Hello from main()! Running on a {} board.",
-        ariel_os::buildinfo::BOARD
-    );
-
-    let boost = LowPowerOutput::new(peripherals.boost);
-    let pin = LowPowerOutput::new(peripherals.smart_led);
-
-    let mut ulp_core = esp_hal::ulp_core::UlpCore::new(peripherals.ulp);
-
-    ulp_core.stop();
-    info!("ulp core stopped");
-
-    // load code to LP core
-    let lp_core_code =
-        load_lp_code!("../coprocessor/target/riscv32imc-unknown-none-elf/release/coprocessor");
-
-    // start LP core
-    lp_core_code.run(
-        &mut ulp_core,
-        esp_hal::ulp_core::UlpCoreWakeupSource::HpCpu,
-        pin,
-        boost,
-    );
-    info!("ulpcore run");
-
-    let data = (0x5000_0020) as *mut u32;
-
-    // let mut rtc = Rtc::new(peripherals.LPWR);
-    // rtc.sleep_deep(&[&ULPWake {}, ]);
-
-    loop {
-        info!("Current debug code {}", unsafe { data.read_volatile() });
-        Timer::after_millis(300).await;
-    }
-}
 
 #[ariel_os::task(autostart, peripherals)]
 async fn screen(peripherals: pins::Epd) {
