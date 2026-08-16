@@ -65,7 +65,7 @@ async fn screen(peripherals: pins::Epd) {
 
     let mut manager = DisplayController::new(epd_controller, receiver);
 
-    let draw_target = DisplayTarget::new(sender);
+    let mut draw_target = DisplayTarget::new(sender);
 
-    embassy_futures::join::join(manager.run(), screens::screen(draw_target)).await;
+    embassy_futures::join::join(manager.run(), screens::screen(&mut draw_target)).await;
 }

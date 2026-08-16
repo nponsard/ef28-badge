@@ -42,30 +42,15 @@ async fn ulp_setup(peripherals: pins::Ulp) {
     // let mut rtc = Rtc::new(peripherals.LPWR);
     // rtc.sleep_deep(&[&ULPWake {}, ]);
 
-    let mut intensity = 20;
-    embassy_futures::join::join(
-        async {
-            loop {
-                unsafe {
-                    SETTINGS.write_volatile(intensity);
-                }
-                intensity += 5;
-                if intensity > 50 {
-                    intensity = 5;
-                }
+    loop {
+        info!("Current debug code {}", unsafe {
+            DEBUG_WORD.read_volatile()
+        });
+        Timer::after_secs(50).await;
+    }
+}
 
-                // info!("Current debug code {}", unsafe { data.read_volatile() });
-                Timer::after_secs(100).await;
-            }
-        },
-        async {
-            loop {
-                info!("Current debug code {}", unsafe {
-                    DEBUG_WORD.read_volatile()
-                });
-                 Timer::after_millis(50).await;
-            }
-        },
-    )
-    .await;
+pub fn write_settings(intensity: u8, pattern: u8, pattern_setting: u16) {
+    let word = intensity as u32 | (pattern as u32) << 8 | (pattern_setting as u32) << 16;
+    unsafe { SETTINGS.write_volatile(word) };
 }
