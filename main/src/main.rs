@@ -1,10 +1,11 @@
 #![no_main]
 #![no_std]
 
+mod buttons;
 mod drawer;
 mod pins;
 mod screens;
-mod ulp_module;
+mod leds_controller;
 
 use ariel_os::{
     gpio, hal,
