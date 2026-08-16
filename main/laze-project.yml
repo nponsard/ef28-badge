@@ -1,0 +1,14 @@
+imports:
+  - git:
+      url: https://github.com/ariel-os/ariel-os
+      tag: v0.5.0
+    dldir: ariel-os
+
+apps:
+  - name: ariel-os-hello
+    context:
+      - espressif-esp32-s3-devkitc-1
+    env:
+      global:
+        executor_stacksize_required:
+          - "96000"

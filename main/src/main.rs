@@ -1,59 +1,37 @@
-#![no_std]
 #![no_main]
-use esp_backtrace as _;
-use esp_hal::gpio::rtc_io::LowPowerOutput;
+#![no_std]
 
-use esp_hal::gpio::{Input, TouchPin};
-use esp_hal::rtc_cntl::sleep::WakeSource;
-use esp_hal::rtc_cntl::Rtc;
-use esp_hal::{
-    clock::ClockControl, delay::Delay, gpio::Io, peripherals::Peripherals, prelude::*,
-    system::SystemControl,
+mod drawer;
+mod pins;
+
+use ariel_os::{
+    gpio, hal,
+    log::info,
+    spi::{self, main::SpiDevice},
+    time::{Delay, Timer},
 };
-use log::info;
+use embassy_sync::{
+    blocking_mutex::raw::CriticalSectionRawMutex, mutex::Mutex, pubsub::PubSubChannel, watch::Watch,
+};
+use embedded_graphics::{pixelcolor::BinaryColor, prelude::DrawTarget};
 
-extern crate alloc;
-use core::mem::MaybeUninit;
+use drawer::{DisplayController, DisplayTarget};
 
-#[global_allocator]
-static ALLOCATOR: esp_alloc::EspHeap = esp_alloc::EspHeap::empty();
+use esp_hal::{gpio::rtc_io::LowPowerOutput, load_lp_code};
 
-fn init_heap() {
-    const HEAP_SIZE: usize = 32 * 1024;
-    static mut HEAP: MaybeUninit<[u8; HEAP_SIZE]> = MaybeUninit::uninit();
+static WATCH: Watch<CriticalSectionRawMutex, [u8; 4736], 1> = Watch::new();
 
-    unsafe {
-        ALLOCATOR.init(HEAP.as_mut_ptr() as *mut u8, HEAP_SIZE);
-    }
-}
+#[ariel_os::task(autostart, peripherals)]
+async fn main(peripherals: pins::Ulp) {
+    info!(
+        "Hello from main()! Running on a {} board.",
+        ariel_os::buildinfo::BOARD
+    );
 
-#[entry]
-fn main() -> ! {
-    let peripherals = Peripherals::take();
-    let system = SystemControl::new(peripherals.SYSTEM);
+    let boost = LowPowerOutput::new(peripherals.boost);
+    let pin = LowPowerOutput::new(peripherals.smart_led);
 
-    let clocks = ClockControl::max(system.clock_control).freeze();
-    let delay = Delay::new(&clocks);
-    init_heap();
-
-    esp_println::logger::init_logger_from_env();
-
-    let timg0 = esp_hal::timer::timg::TimerGroup::new(peripherals.TIMG0, &clocks);
-    let _init = esp_wifi::initialize(
-        esp_wifi::EspWifiInitFor::Wifi,
-        timg0.timer0,
-        esp_hal::rng::Rng::new(peripherals.RNG),
-        peripherals.RADIO_CLK,
-        &clocks,
-    )
-    .unwrap();
-
-    let io: Io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
-
-    let boost = LowPowerOutput::new(io.pins.gpio9);
-    let pin = LowPowerOutput::new(io.pins.gpio21);
-
-    let mut ulp_core = esp_hal::ulp_core::UlpCore::new(peripherals.ULP_RISCV_CORE);
+    let mut ulp_core = esp_hal::ulp_core::UlpCore::new(peripherals.ulp);
 
     ulp_core.stop();
     info!("ulp core stopped");
@@ -78,6 +56,71 @@ fn main() -> ! {
 
     loop {
         info!("Current debug code {}", unsafe { data.read_volatile() });
-        delay.delay_millis(300);
+        Timer::after_millis(300).await;
     }
+}
+
+#[ariel_os::task(autostart, peripherals)]
+async fn screen(peripherals: pins::Epd) {
+    static SPI_BUS: once_cell::sync::OnceCell<
+        Mutex<embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex, hal::spi::main::Spi>,
+    > = once_cell::sync::OnceCell::new();
+
+    info!("Starting EPD demo");
+    let mut spi_config = hal::spi::main::Config::default();
+    spi_config.frequency = const {
+        spi::main::highest_freq_in(spi::main::Kilohertz::MHz(1)..=spi::main::Kilohertz::MHz(20))
+    };
+
+    info!("Configured SPI");
+
+    let spi_bus = pins::EpdSpi::new(
+        peripherals.spi_sck,
+        peripherals.spi_miso,
+        peripherals.spi_mosi,
+        spi_config,
+    );
+
+    info!("Created SPI bus");
+
+    let _ = SPI_BUS.set(Mutex::new(spi_bus));
+
+    let cs_output: gpio::Output = gpio::Output::new(peripherals.spi_cs, gpio::Level::High);
+    let dc = gpio::Output::new(peripherals.dc, gpio::Level::High);
+    let busy = gpio::Input::builder(peripherals.busy, gpio::Pull::Up)
+        .build_with_interrupt()
+        .unwrap();
+    let reset = gpio::Output::new(peripherals.reset, gpio::Level::High);
+
+    let spi_device = SpiDevice::new(SPI_BUS.get().unwrap(), cs_output);
+
+    let config = ssd1680_rs::config::DisplayConfig::epd_290_t94();
+
+    let mut epd_controller: ssd1680_rs::driver_async::SSD1680<_, _, _, _, _> =
+        ssd1680_rs::driver_async::SSD1680::new(reset, dc, busy, Delay, spi_device, config);
+
+    epd_controller.hw_init().await.unwrap();
+
+    let sender = WATCH.sender();
+    let receiver = WATCH.receiver().unwrap();
+
+    let mut manager = DisplayController::new(epd_controller, receiver);
+
+    let mut draw_target = DisplayTarget::new(sender);
+
+    info!("entering main loop");
+
+    embassy_futures::join::join(manager.run(), async {
+        loop {
+            info!("Display loop");
+            // Off = black
+            draw_target.clear(BinaryColor::Off);
+            draw_target.flush();
+
+            Timer::after_millis(300).await;
+            draw_target.clear(BinaryColor::On);
+            draw_target.flush();
+        }
+    })
+    .await;
 }

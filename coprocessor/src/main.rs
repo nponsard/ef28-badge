@@ -35,7 +35,7 @@ fn main(gpio21: Output<21>, mut gpio9: Output<9>) -> ! {
             // pride flag trans
 
             controller.set_data(&[
-                black, black, black, black, black, black, l_blue, l_blue, pink, pink, white, white,
+                black, black, black, black, white, white, l_blue, l_blue, pink, pink, white, white,
                 white, pink, pink, l_blue, l_blue,
             ]);
 
