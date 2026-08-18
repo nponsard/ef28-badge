@@ -1,4 +1,3 @@
-use ariel_os::time::Timer;
 use embedded_graphics::{
     Drawable as _, draw_target::DrawTarget as _, geometry::Point, image::Image,
     pixelcolor::BinaryColor,

@@ -29,6 +29,7 @@ pub enum Screen {
     Presentation,
     SettingsMain,
     SettingsLed,
+    SettingsLedMode,
 }
 
 impl Screen {
@@ -38,6 +39,7 @@ impl Screen {
             Self::Presentation => presentation::presentation(draw_target).await,
             Self::SettingsMain => settings::settings_main(draw_target).await,
             Screen::SettingsLed => settings::settings_led(draw_target).await,
+            Screen::SettingsLedMode => settings::settings_led_mode(draw_target).await,
         }
     }
 }

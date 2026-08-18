@@ -11,7 +11,7 @@ use u8g2_fonts::types::{FontColor, HorizontalAlignment, VerticalPosition};
 use crate::{
     buttons::{Button, wait_for_button_released},
     drawer::DisplayTarget,
-    leds_controller::change_led_settings,
+    leds_controller::{change_led_settings, current_led_settings},
     screens::{MEDIUM_SMALL_FONT, MENU_FONT, Screen},
 };
 
@@ -39,11 +39,15 @@ fn draw_header(draw_target: &mut DisplayTarget<'_>, name: &str) {
         .unwrap();
 }
 
+fn list_element_y(index: u8) -> i32 {
+    HEADER_VERTICAL_PADDING + i32::from(index) * LIST_ELEMENT_HEIGHT
+}
+
 fn draw_list_element(draw_target: &mut DisplayTarget<'_>, name: &str, selected: u8, index: u8) {
     debug!("list element: {}", name);
     const SELECT_PADDING: i32 = 5;
 
-    let y = HEADER_VERTICAL_PADDING + i32::from(index) * LIST_ELEMENT_HEIGHT;
+    let y = list_element_y(index);
     MENU_FONT
         .render_aligned(
             name,
@@ -105,10 +109,11 @@ pub async fn settings_main(draw_target: &mut DisplayTarget<'_>) -> Screen {
 
 // - 0: decrease brightness
 // - 1: increase brightness
-// - 2: go back to main settings
+// - 2: led mode submenu
+// - 3: go back to main settings
 #[allow(clippy::unnecessary_min_or_max)]
 pub async fn settings_led(draw_target: &mut DisplayTarget<'_>) -> Screen {
-    const ELEMENTS_COUNT: u8 = 3;
+    const ELEMENTS_COUNT: u8 = 4;
     const MIN_BRIGHTNESS: u8 = 0;
     const MAX_BRIGHTNESS: u8 = 50;
 
@@ -119,7 +124,8 @@ pub async fn settings_led(draw_target: &mut DisplayTarget<'_>) -> Screen {
         draw_header(draw_target, "Led Settings");
         draw_list_element(draw_target, "Decrease brightness", element_selected, 0);
         draw_list_element(draw_target, "Increase brightness", element_selected, 1);
-        draw_list_element(draw_target, "Back", element_selected, 2);
+        draw_list_element(draw_target, "Led mode", element_selected, 2);
+        draw_list_element(draw_target, "Back", element_selected, 3);
 
         draw_target.flush();
 
@@ -144,6 +150,68 @@ pub async fn settings_led(draw_target: &mut DisplayTarget<'_>) -> Screen {
                     })
                     .await;
                     info!("setting brightness to {}", settings.intensity);
+                }
+                2 => {
+                    return Screen::SettingsLedMode;
+                }
+                3 => {
+                    return Screen::SettingsMain;
+                }
+                _ => {
+                    return Screen::SettingsMain;
+                }
+            },
+        }
+    }
+}
+
+#[allow(clippy::unnecessary_min_or_max)]
+pub async fn settings_led_mode(draw_target: &mut DisplayTarget<'_>) -> Screen {
+    const ELEMENTS_COUNT: u8 = 3;
+
+    let width = draw_target.bounding_box().size.width as i32;
+
+    let mut element_selected = 0;
+    loop {
+        let led_mode = current_led_settings().await.pattern;
+        draw_target.clear(BinaryColor::On);
+
+        draw_header(draw_target, "Led Mode");
+        draw_list_element(draw_target, "Flag", element_selected, 0);
+        draw_list_element(draw_target, "Breathing", element_selected, 1);
+        draw_list_element(draw_target, "Back", element_selected, 2);
+
+        MENU_FONT
+            .render_aligned(
+                "*",
+                Point::new(width-10, list_element_y(led_mode )),
+                VerticalPosition::Baseline,
+                HorizontalAlignment::Right,
+                FontColor::Transparent(BinaryColor::Off),
+                draw_target,
+            )
+            .unwrap();
+
+        draw_target.flush();
+
+        match wait_for_button_released().await.button {
+            Button::Left => element_selected = (element_selected + 1) % ELEMENTS_COUNT,
+            Button::Right => match element_selected {
+                // flag
+                0 => {
+                    change_led_settings(|mut settings| {
+                        settings.pattern = 1;
+                        settings
+                    })
+                    .await;
+                }
+                // Breathing
+                1 => {
+                    change_led_settings(|mut settings| {
+                        settings.pattern = 2;
+                        settings
+                    })
+                    .await;
                 }
                 2 => {
                     return Screen::SettingsMain;

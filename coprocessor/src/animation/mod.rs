@@ -1,31 +1,28 @@
+mod breathing;
+pub mod colors;
 mod flag;
 
 use esp_lp_hal::gpio::Output;
 
 use crate::{
-    animation::flag::flag,
+    animation::{breathing::breathing, flag::flag},
     ef_led::{run, Rgb},
     led_data::{apply_intensity_iter, LedData},
 };
 
 #[derive(Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
 enum Pattern {
     Flag = 1,
+    Breathing = 2,
 }
 
 impl From<u8> for Pattern {
     fn from(value: u8) -> Self {
         match value {
             1 => Self::Flag,
+            2 => Self::Breathing,
             _ => Self::Flag,
-        }
-    }
-}
-
-impl Into<u8> for Pattern {
-    fn into(self) -> u8 {
-        match self {
-            Pattern::Flag => 1,
         }
     }
 }
@@ -35,6 +32,7 @@ impl Pattern {
     pub fn run(&self, settings: u16, tick: u16) -> (LedData, bool) {
         match self {
             Self::Flag => flag(settings, tick),
+            Self::Breathing => breathing(settings, tick),
         }
     }
 }

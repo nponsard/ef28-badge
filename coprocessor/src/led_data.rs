@@ -11,7 +11,7 @@ pub fn apply_intensity_iter<IT: Iterator<Item = Rgb>>(
     current_data.map(move |color| apply_intensity_color(color, intensity))
 }
 
-fn apply_intensity_color(color: Rgb, intensity: u8) -> Rgb {
+pub fn apply_intensity_color(color: Rgb, intensity: u8) -> Rgb {
     (
         apply_intensity_element(color.0, intensity),
         apply_intensity_element(color.1, intensity),
