@@ -66,7 +66,7 @@ impl LedSettings {
     const fn new() -> Self {
         Self {
             intensity: 40,
-            pattern: 0,
+            pattern: 1,
             pattern_settings: 0,
         }
     }

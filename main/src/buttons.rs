@@ -55,14 +55,18 @@ async fn button_handler(peripherals: pins::Buttons) {
         match embassy_futures::select::select(
             async {
                 loop {
-                    left.wait_for_rising_edge().await;
+                    left.wait_for_falling_edge().await;
                     match embassy_futures::select::select(
                         Timer::after(DEBOUNCE_TIME),
                         left.wait_for_any_edge(),
                     )
                     .await
                     {
-                        Either::First(_) => return,
+                        Either::First(_) => {
+                            if left.is_low() {
+                                return;
+                            }
+                        }
                         Either::Second(_) => continue,
                     };
 
@@ -78,14 +82,18 @@ async fn button_handler(peripherals: pins::Buttons) {
             },
             async {
                 loop {
-                    right.wait_for_rising_edge().await;
+                    right.wait_for_falling_edge().await;
                     match embassy_futures::select::select(
                         Timer::after(DEBOUNCE_TIME),
                         right.wait_for_any_edge(),
                     )
                     .await
                     {
-                        Either::First(_) => return,
+                        Either::First(_) => {
+                            if right.is_low() {
+                                return;
+                            }
+                        }
                         Either::Second(_) => continue,
                     };
                 }

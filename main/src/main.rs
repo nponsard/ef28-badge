@@ -3,9 +3,9 @@
 
 mod buttons;
 mod drawer;
+mod leds_controller;
 mod pins;
 mod screens;
-mod leds_controller;
 
 use ariel_os::{
     gpio, hal,
@@ -18,7 +18,7 @@ use embassy_sync::{
     blocking_mutex::raw::CriticalSectionRawMutex, mutex::Mutex, pubsub::PubSubChannel, watch::Watch,
 };
 
-static WATCH: Watch<CriticalSectionRawMutex, [u8; 4736], 1> = Watch::new();
+static WATCH: Watch<CriticalSectionRawMutex, ([u8; 4736], bool), 1> = Watch::new();
 
 #[ariel_os::task(autostart, peripherals)]
 async fn screen(peripherals: pins::Epd) {

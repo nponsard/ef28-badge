@@ -9,7 +9,7 @@ use embedded_graphics::{
 use u8g2_fonts::types::{FontColor, HorizontalAlignment, VerticalPosition};
 
 use crate::{
-    buttons::{Button, wait_for_button_released},
+    buttons::{Button, wait_for_button_event},
     drawer::DisplayTarget,
     leds_controller::{change_led_settings, current_led_settings},
     screens::{MEDIUM_SMALL_FONT, MENU_FONT, Screen},
@@ -88,9 +88,9 @@ pub async fn settings_main(draw_target: &mut DisplayTarget<'_>) -> Screen {
         draw_list_element(draw_target, "Led settings", element_selected, 0);
         draw_list_element(draw_target, "Presentation screen", element_selected, 1);
 
-        draw_target.flush();
+        draw_target.flush(false);
 
-        match wait_for_button_released().await.button {
+        match wait_for_button_event().await.button {
             Button::Left => element_selected = (element_selected + 1) % ELEMENTS_COUNT,
             Button::Right => match element_selected {
                 0 => {
@@ -127,9 +127,9 @@ pub async fn settings_led(draw_target: &mut DisplayTarget<'_>) -> Screen {
         draw_list_element(draw_target, "Led mode", element_selected, 2);
         draw_list_element(draw_target, "Back", element_selected, 3);
 
-        draw_target.flush();
+        draw_target.flush(false);
 
-        match wait_for_button_released().await.button {
+        match wait_for_button_event().await.button {
             Button::Left => element_selected = (element_selected + 1) % ELEMENTS_COUNT,
             Button::Right => match element_selected {
                 0 => {
@@ -184,7 +184,7 @@ pub async fn settings_led_mode(draw_target: &mut DisplayTarget<'_>) -> Screen {
         MENU_FONT
             .render_aligned(
                 "*",
-                Point::new(width-10, list_element_y(led_mode )),
+                Point::new(width - 10, list_element_y(led_mode)),
                 VerticalPosition::Baseline,
                 HorizontalAlignment::Right,
                 FontColor::Transparent(BinaryColor::Off),
@@ -192,9 +192,9 @@ pub async fn settings_led_mode(draw_target: &mut DisplayTarget<'_>) -> Screen {
             )
             .unwrap();
 
-        draw_target.flush();
+        draw_target.flush(false);
 
-        match wait_for_button_released().await.button {
+        match wait_for_button_event().await.button {
             Button::Left => element_selected = (element_selected + 1) % ELEMENTS_COUNT,
             Button::Right => match element_selected {
                 // flag

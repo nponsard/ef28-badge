@@ -5,7 +5,7 @@ use embedded_graphics::{
 use u8g2_fonts::types::{FontColor, HorizontalAlignment, VerticalPosition};
 
 use crate::{
-    buttons::wait_for_button_released,
+    buttons::wait_for_button_event,
     drawer::DisplayTarget,
     screens::{BIG_FONT, MEDIUM_FONT, MEDIUM_SMALL_FONT, PFP, SMALL_MONOSPACE_FONT, Screen},
 };
@@ -68,9 +68,9 @@ pub async fn presentation(draw_target: &mut DisplayTarget<'_>) -> Screen {
         )
         .unwrap();
 
-    draw_target.flush();
+    draw_target.flush(true);
 
-    wait_for_button_released().await;
+    wait_for_button_event().await;
 
     Screen::SettingsMain
 }

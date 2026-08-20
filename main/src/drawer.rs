@@ -31,7 +31,7 @@ pub struct DisplayController<
 > {
     refresh_count: u8,
     driver: SSD1680<RST, DC, BUSY, DELAY, SPI>,
-    receiver: Receiver<'a, CriticalSectionRawMutex, FrameBuffer, 1>,
+    receiver: Receiver<'a, CriticalSectionRawMutex, (FrameBuffer, bool), 1>,
 }
 impl<'a, RST: OutputPin, DC: OutputPin, BUSY: InputPin + Wait, DELAY: DelayNs, SPI: SpiDevice>
     DisplayController<'a, RST, DC, BUSY, DELAY, SPI>
@@ -39,7 +39,7 @@ impl<'a, RST: OutputPin, DC: OutputPin, BUSY: InputPin + Wait, DELAY: DelayNs, S
     const REFRESH_AFTER: u8 = 10;
     pub fn new(
         driver: SSD1680<RST, DC, BUSY, DELAY, SPI>,
-        receiver: Receiver<'a, CriticalSectionRawMutex, FrameBuffer, 1>,
+        receiver: Receiver<'a, CriticalSectionRawMutex, (FrameBuffer, bool), 1>,
     ) -> Self {
         Self {
             refresh_count: Self::REFRESH_AFTER, // force a full refresh on first flush
@@ -51,8 +51,9 @@ impl<'a, RST: OutputPin, DC: OutputPin, BUSY: InputPin + Wait, DELAY: DelayNs, S
     /// This needs to continuously run in order to send the updates to the screen.
     pub async fn run(&mut self) {
         let mut frame_buffer;
+        let mut full_refresh = false;
         loop {
-            frame_buffer = self.receiver.changed().await;
+            (frame_buffer, full_refresh) = self.receiver.changed().await;
             debug!("flushing to display");
 
             // driver.hw_init().await.unwrap();
@@ -64,7 +65,7 @@ impl<'a, RST: OutputPin, DC: OutputPin, BUSY: InputPin + Wait, DELAY: DelayNs, S
 
             self.driver.wait_for_busy().await.unwrap();
 
-            if self.refresh_count >= Self::REFRESH_AFTER {
+            if self.refresh_count >= Self::REFRESH_AFTER || full_refresh {
                 debug!("Doing a full refresh");
                 // Somehow the full refresh reads from the RED memory.
                 self.driver.write_red_bytes(&frame_buffer).await.unwrap();
@@ -91,11 +92,11 @@ impl<'a, RST: OutputPin, DC: OutputPin, BUSY: InputPin + Wait, DELAY: DelayNs, S
 /// The frambuffer is then received by [`DisplayController`] that asynchronously sends it to the display.
 pub struct DisplayTarget<'a> {
     frame_buffer_changed: bool,
-    sender: Sender<'a, CriticalSectionRawMutex, FrameBuffer, 1>,
+    sender: Sender<'a, CriticalSectionRawMutex, (FrameBuffer, bool), 1>,
     frame_buffer: FrameBuffer,
 }
 impl<'a> DisplayTarget<'a> {
-    pub fn new(sender: Sender<'a, CriticalSectionRawMutex, FrameBuffer, 1>) -> Self {
+    pub fn new(sender: Sender<'a, CriticalSectionRawMutex, (FrameBuffer, bool), 1>) -> Self {
         Self {
             sender,
             frame_buffer_changed: true,
@@ -105,9 +106,9 @@ impl<'a> DisplayTarget<'a> {
 
     /// Send the framebuffer to be displayed on the screen.
     /// If no changes have happened since the last call to `flush`, the framebuffer won't be sent.
-    pub fn flush(&mut self) {
+    pub fn flush(&mut self, full_refresh: bool) {
         if self.frame_buffer_changed {
-            self.sender.send(self.frame_buffer);
+            self.sender.send((self.frame_buffer, full_refresh));
             self.frame_buffer_changed = false;
         }
     }
