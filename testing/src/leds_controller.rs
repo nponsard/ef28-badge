@@ -55,9 +55,9 @@ async fn ulp_setup(peripherals: pins::Ulp) {
             DEBUG_WORD.read_volatile()
         });
         change_led_settings(|mut old| {
-            old.pattern += 1;
-            if old.pattern > 3 {
-                old.pattern = 1;
+            old.intensity += 20;
+            if old.intensity > 60 {
+                old.intensity = 0;
             }
             old
         })

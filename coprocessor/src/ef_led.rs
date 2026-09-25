@@ -110,7 +110,7 @@ impl CodeBuffer {
         self.buffer[self.pointer] = 0x13;
         self.buffer[self.pointer + 1] = 0x06;
         // first 4 bits.
-        self.buffer[self.pointer + 2] = (pin_register << 4) as u8;
+        self.buffer[self.pointer + 2] = 0x06 | (pin_register << 4) as u8;
         // next 8 bits.
         self.buffer[self.pointer + 3] = (pin_register >> 4) as u8;
         self.pointer += 4;
