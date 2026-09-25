@@ -28,7 +28,7 @@ const T0L: u8 = T1H;
 // const T1L: u8 = 0;
 
 pub const LED_COUNT: usize = 17;
-pub const LED_PIN: u8 = 21;
+pub const LED_PIN: u8 = 1;
 pub type Rgb = (u8, u8, u8);
 
 pub type LedDataArr = [Rgb; LED_COUNT];
@@ -39,7 +39,6 @@ pub type LedDataArr = [Rgb; LED_COUNT];
 // we need approx 5k
 // const BUFFER_SIZE: usize = 4914;
 const BUFFER_SIZE: usize = 600;
-
 
 struct CodeBuffer {
     buffer: [u8; BUFFER_SIZE],
@@ -73,7 +72,9 @@ impl CodeBuffer {
     pub fn nop(&mut self) {
         self.buffer[self.pointer] = 0x01;
         self.buffer[self.pointer + 1] = 0x00;
-        self.pointer += 2;
+        self.buffer[self.pointer + 2] = 0x01;
+        self.buffer[self.pointer + 3] = 0x00;
+        self.pointer += 4;
     }
 
     // 8082
@@ -131,9 +132,9 @@ impl CodeBuffer {
 
             if (value >> (7 - i) & (1)) == 1 {
                 // we need a 1, we need to wait 800ns
-                for _ in 0..T1H {
-                    self.nop();
-                }
+
+                self.nop();
+
                 // then low for 450ns
 
                 // turn off
@@ -154,9 +155,7 @@ impl CodeBuffer {
                 self.turn_off();
 
                 // NOPs
-                for _ in 0..T0L {
-                    self.nop();
-                }
+                self.nop();
             }
         }
     }
