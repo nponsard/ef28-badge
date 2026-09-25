@@ -4,6 +4,7 @@ mod animation;
 mod ef_led;
 mod led_data;
 
+use ef_led::LED_PIN;
 use esp_lp_hal::{delay::Delay, gpio::Output, prelude::*};
 use panic_halt as _;
 
@@ -27,9 +28,10 @@ const SETTINGS_ADDR: usize = SHARED_START + 4;
 const SETTINGS: *mut u32 = SETTINGS_ADDR as *mut u32;
 
 #[entry]
-fn main(gpio21: Output<21>, mut gpio9: Output<9>) -> ! {
+fn main(mut led_pin: Output<LED_PIN>, mut gpio9: Output<9>) -> ! {
     // enable boost converter to drive the leds
     gpio9.set_output(true);
+    led_pin.set_output(true);
 
     unsafe {
         DEBUG_WORD.write_volatile(122);
@@ -41,7 +43,7 @@ fn main(gpio21: Output<21>, mut gpio9: Output<9>) -> ! {
     // let pink = (230, 0, 100);
     // let l_blue = (100, 100, 230);
 
-    let mut animator = Animator::new(gpio21);
+    let mut animator = Animator::new(led_pin);
 
     // Delay.delay_millis(200);
     let tick_delay_ms = 0;

@@ -1,0 +1,57 @@
+{
+  "lsp": {
+    "rust-analyzer": {
+      "initialization_options": {
+        "cargo": {
+          "buildScripts": {
+            "overrideCommand": [
+              "cargo",
+              "check",
+              "-Zbuild-std=core,alloc",
+              "--features=ariel-os/panic-printing,ariel-os/defmt,ariel-os/esp-println,ariel-os/logging-over-usb,ariel-os/single-core,ariel-os/executor-thread,ariel-os/idle-threads",
+              "--message-format=json"
+            ]
+          },
+          "extraEnv": {
+            "CARGO_BUILD_TARGET": "xtensa-esp32s3-none-elf",
+            "CARGO_TARGET_DIR": "./build/bin/espressif-esp32-s3-devkitc-1/cargo",
+            "CARGO_TARGET_XTENSA_ESP32S3_NONE_ELF_RUNNER": "espflash flash --monitor --log-format defmt",
+            "CARGO_TARGET_XTENSA_ESP32S3_NONE_ELF_RUSTFLAGS": "--cfg context=\"espressif-esp32-s3-devkitc-1\" --cfg context=\"esp32-s3-wroom-1\" --cfg context=\"esp32s3\" --cfg context=\"esp\" --cfg context=\"ariel-os\" --cfg context=\"default\" -Clink-arg=-Tlinkall.x -Cembed-bitcode=yes -Clto=fat -Ccodegen-units=1 -Clink-arg=-Tdefmt.x --cfg context=\"xtensa\" --cfg nightly -Clink-arg=-Tisr_stack_xtensa.x",
+            "CONFIG_BOARD": "espressif-esp32-s3-devkitc-1",
+            "CONFIG_EXECUTOR_STACKSIZE": "8192",
+            "CONFIG_ISR_STACKSIZE": "32768",
+            "CONFIG_WIFI_NETWORK": "test-wifi",
+            "CONFIG_WIFI_PASSWORD": "test-password",
+            "DEFMT_LOG": "info,",
+            "OPENOCD_ARGS": "",
+            "RUSTFLAGS": "--cfg context=\"espressif-esp32-s3-devkitc-1\" --cfg context=\"esp32-s3-wroom-1\" --cfg context=\"esp32s3\" --cfg context=\"esp\" --cfg context=\"ariel-os\" --cfg context=\"default\" -Clink-arg=-Tlinkall.x -Cembed-bitcode=yes -Clto=fat -Ccodegen-units=1 -Clink-arg=-Tdefmt.x --cfg context=\"xtensa\" --cfg nightly -Clink-arg=-Tisr_stack_xtensa.x",
+            "RUSTUP_TOOLCHAIN": "esp",
+            "SCRIPTS": "./scripts",
+            "TARGET_CC": "xtensa-esp32s3-elf-gcc",
+            "TARGET_CFLAGS": "-mlongcalls"
+          },
+          "features": [
+            "ariel-os/panic-printing",
+            "ariel-os/defmt",
+            "ariel-os/esp-println",
+            "ariel-os/logging-over-usb",
+            "ariel-os/single-core",
+            "ariel-os/executor-thread",
+            "ariel-os/idle-threads"
+          ]
+        },
+        "check": {
+          "allTargets": false,
+          "command": "clippy",
+          "extraArgs": [
+            "-Zbuild-std=core,alloc",
+            "--features=ariel-os/panic-printing,ariel-os/defmt,ariel-os/esp-println,ariel-os/logging-over-usb,ariel-os/single-core,ariel-os/executor-thread,ariel-os/idle-threads"
+          ]
+        },
+        "files": {
+          "watcher": "server"
+        }
+      }
+    }
+  }
+}

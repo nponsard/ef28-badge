@@ -27,6 +27,7 @@ const T0L: u8 = 4;
 const T1L: u8 = 2;
 
 pub const LED_COUNT: usize = 17;
+pub const LED_PIN: u8 = 21;
 pub type Rgb = (u8, u8, u8);
 
 pub type LedDataArr = [Rgb; LED_COUNT];
@@ -35,7 +36,7 @@ pub type LedDataArr = [Rgb; LED_COUNT];
 // 24 bits per led
 // 16 bytes (8 compressed instructions) to encode 1 bit
 // we need approx 5k
-const BUFFER_SIZE: usize = 4908;
+const BUFFER_SIZE: usize = 4916;
 
 struct CodeBuffer {
     buffer: [u8; BUFFER_SIZE],
@@ -89,11 +90,29 @@ impl CodeBuffer {
         self.buffer[self.pointer + 3] = 0x40;
         self.pointer += 4;
 
-        //80 00 06 37       lui	a2,0x80000
+        // Store the pin offset in register a2.
+        // firt 10 bits are reserved in RTC_GPIO_ENABLE_W1TC and RTC_GPIO_ENABLE_W1TS.
+        let pin_register: u32 = 1 << (LED_PIN + 10);
+        // let pin_register: u32 = 0xff_ff_ff_ff;
+
+        // Load upper part of the pin.
+        //80 00 06 37       lui	a2,PIN>>12
         self.buffer[self.pointer] = 0x37;
+        self.buffer[self.pointer + 1] = 0x06 | ((pin_register >> 10) & 0xF0) as u8;
+        // next 8 bits.
+        self.buffer[self.pointer + 2] = (pin_register >> 16) as u8;
+        // last 8 bits.
+        self.buffer[self.pointer + 3] = (pin_register >> 24) as u8;
+        self.pointer += 4;
+
+        // Load lower part of the pin.
+        // 00 80 06 13      addi a2, zero, PIN
+        self.buffer[self.pointer] = 0x13;
         self.buffer[self.pointer + 1] = 0x06;
-        self.buffer[self.pointer + 2] = 0x00;
-        self.buffer[self.pointer + 3] = 0x80;
+        // first 4 bits.
+        self.buffer[self.pointer + 2] = (pin_register << 4) as u8;
+        // next 8 bits.
+        self.buffer[self.pointer + 3] = (pin_register >> 4) as u8;
         self.pointer += 4;
     }
 
@@ -141,6 +160,10 @@ impl CodeBuffer {
         self.color(*g);
         self.color(*r);
         self.color(*b);
+
+        // for _ in 0..40 {
+        //     self.nop();
+        // }
     }
 
     // used for debbuging purposes, write to 0x20 a debug code
@@ -172,9 +195,9 @@ impl CodeBuffer {
     }
 }
 
-pub fn run<'a, const PIN: u8>(gpio21: &mut Output<PIN>, colors_array: impl Iterator<Item = Rgb>) {
+pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iterator<Item = Rgb>) {
     // ensure we start at low and we pause for enough time (RES)
-    gpio21.set_output(false);
+    led_pin.set_output(false);
     Delay.delay_millis(1);
     // let ptr = ADDRESS as *mut u32;
 
@@ -197,7 +220,14 @@ pub fn run<'a, const PIN: u8>(gpio21: &mut Output<PIN>, colors_array: impl Itera
         // jump to the code pointer
         let code_ptr = buffer.as_ptr();
         asm! {
-            "jalr   ra,{x},0",
+            "addi  sp,sp,-8
+            sw     a1, 0(sp)
+            sw     a2, 4(sp)
+            jalr   ra,{x},0
+            lw     a1, 0(sp)
+            lw     a2, 4(sp)
+            addi   sp,sp,8
+            ",
         x= in(reg) code_ptr}
     }
 }
