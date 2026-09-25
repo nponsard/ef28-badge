@@ -115,7 +115,7 @@ pub async fn settings_main(draw_target: &mut DisplayTarget<'_>) -> Screen {
 pub async fn settings_led(draw_target: &mut DisplayTarget<'_>) -> Screen {
     const ELEMENTS_COUNT: u8 = 4;
     const MIN_BRIGHTNESS: u8 = 0;
-    const MAX_BRIGHTNESS: u8 = 50;
+    const MAX_BRIGHTNESS: u8 = 74;
 
     let mut element_selected = 0;
     loop {

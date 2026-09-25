@@ -1,4 +1,5 @@
 mod presentation;
+mod qr;
 mod settings;
 
 use core::fmt::Debug;
@@ -11,6 +12,22 @@ use u8g2_fonts::{FontRenderer, fonts};
 use crate::{buttons::clear_inputs, drawer::DisplayTarget};
 
 pub const PFP: Bmp<'_, BinaryColor> = match Bmp::from_slice(include_bytes!("../../assets/pfp.bmp"))
+{
+    Ok(bmp) => bmp,
+    Err(_) => panic!("Cannot parse bmp"),
+};
+
+pub const QR_BSKY: Bmp<'_, BinaryColor> = match Bmp::from_slice(include_bytes!("../../assets/bsky.bmp"))
+{
+    Ok(bmp) => bmp,
+    Err(_) => panic!("Cannot parse bmp"),
+};
+pub const QR_FURTRACK: Bmp<'_, BinaryColor> = match Bmp::from_slice(include_bytes!("../../assets/furtrack.bmp"))
+{
+    Ok(bmp) => bmp,
+    Err(_) => panic!("Cannot parse bmp"),
+};
+pub const QR_TELEGRAM: Bmp<'_, BinaryColor> = match Bmp::from_slice(include_bytes!("../../assets/telegram.bmp"))
 {
     Ok(bmp) => bmp,
     Err(_) => panic!("Cannot parse bmp"),
