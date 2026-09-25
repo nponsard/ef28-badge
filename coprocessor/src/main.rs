@@ -54,7 +54,7 @@ fn main(mut led_pin: Output<LED_PIN>, mut gpio9: Output<9>) -> ! {
         let pattern_settings = (settings >> 16) as u16;
 
         animator.tick(intensity, pattern, pattern_settings);
-        Delay.delay_millis(tick_delay_ms);
+        // Delay.delay_millis(tick_delay_ms);
 
         unsafe {
             DEBUG_WORD.write_volatile(intensity.into());

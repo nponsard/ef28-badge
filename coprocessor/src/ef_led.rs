@@ -15,7 +15,7 @@
 ///
 use core::arch::asm;
 
-use esp_lp_hal::{delay::Delay, gpio::Output};
+use esp_lp_hal::gpio::Output;
 
 // Shared address with the main processor where you can write debug codes
 // const ADDRESS: u32 = 0x20;
@@ -23,8 +23,9 @@ use esp_lp_hal::{delay::Delay, gpio::Output};
 // Number of NOPs to wait during each phase of a bit (following the WS2812B datasheet naming convention).
 // const T0H: u8 = 0;
 const T1H: u8 = 2;
-const T0L: u8 = 4;
-const T1L: u8 = 2;
+// const T0L: u8 = 4;
+const T0L: u8 = T1H;
+// const T1L: u8 = 0;
 
 pub const LED_COUNT: usize = 17;
 pub const LED_PIN: u8 = 21;
@@ -36,7 +37,9 @@ pub type LedDataArr = [Rgb; LED_COUNT];
 // 24 bits per led
 // 16 bytes (8 compressed instructions) to encode 1 bit
 // we need approx 5k
-const BUFFER_SIZE: usize = 4916;
+// const BUFFER_SIZE: usize = 4914;
+const BUFFER_SIZE: usize = 600;
+
 
 struct CodeBuffer {
     buffer: [u8; BUFFER_SIZE],
@@ -48,6 +51,10 @@ impl CodeBuffer {
         let buffer: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
         Self { buffer, pointer: 0 }
     }
+    pub fn clear(&mut self) {
+        self.pointer = 0;
+    }
+
     // c1d0                    sw      a2,4(a1)
     pub fn turn_on(&mut self) {
         self.buffer[self.pointer] = 0xd0;
@@ -133,9 +140,9 @@ impl CodeBuffer {
                 self.turn_off();
 
                 // NOPs
-                for _ in 0..T1L {
-                    self.nop();
-                }
+                // for _ in 0..T1L {
+                //     self.nop();
+                // }
             } else {
                 // we need a 0, we need to wait for 400ns
                 // 0 nops
@@ -160,10 +167,6 @@ impl CodeBuffer {
         self.color(*g);
         self.color(*r);
         self.color(*b);
-
-        // for _ in 0..40 {
-        //     self.nop();
-        // }
     }
 
     // used for debbuging purposes, write to 0x20 a debug code
@@ -198,29 +201,29 @@ impl CodeBuffer {
 pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iterator<Item = Rgb>) {
     // ensure we start at low and we pause for enough time (RES)
     led_pin.set_output(false);
-    Delay.delay_millis(1);
+    // generating the array takes ~20-25ms, no need to sleep
+    // Delay.delay_millis(1);
+
     // let ptr = ADDRESS as *mut u32;
 
     // make the buffer
     let mut buffer = CodeBuffer::new();
-
-    buffer.configure_registers();
-
     for c in colors_array {
+        buffer.clear();
+        buffer.configure_registers();
         buffer.colors(&c);
-    }
+        // return from the function
+        buffer.ret();
 
-    // return from the function
-    buffer.ret();
-    unsafe {
-        // use this to debug how many bytes are used in the buffer
-        // ptr.write_volatile(pointer as u32);
-        // Delay.delay_millis(1000);
+        unsafe {
+            // use this to debug how many bytes are used in the buffer
+            // ptr.write_volatile(pointer as u32);
+            // Delay.delay_millis(1000);
 
-        // jump to the code pointer
-        let code_ptr = buffer.as_ptr();
-        asm! {
-            "addi  sp,sp,-8
+            // jump to the code pointer
+            let code_ptr = buffer.as_ptr();
+            asm! {
+                "addi  sp,sp,-8
             sw     a1, 0(sp)
             sw     a2, 4(sp)
             jalr   ra,{x},0
@@ -228,6 +231,7 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
             lw     a2, 4(sp)
             addi   sp,sp,8
             ",
-        x= in(reg) code_ptr}
+            x= in(reg) code_ptr}
+        }
     }
 }
