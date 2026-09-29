@@ -351,11 +351,13 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    0x01,
-    0x00,
+    // 0x01,
+    // 0x00,
+    0x09,
+    0xc5,
     // ret
-    0x80,
     0x82,
+    0x80,
 ];
 
 struct CodeBuffer {
@@ -372,6 +374,10 @@ impl CodeBuffer {
         }
     }
     pub fn clear(&mut self) {
+        self.pointer = 14;
+    }
+
+    pub fn clear_old(&mut self) {
         self.pointer = 0;
     }
 
@@ -388,6 +394,13 @@ impl CodeBuffer {
         let at = at * 2 + 2;
         self.buffer[self.pointer + at] = 0x90;
         self.buffer[self.pointer + 1 + at] = 0xc5;
+    }
+
+    pub fn nop_at(&mut self, at: usize) {
+        // each instruction is 2 bytes, first instructions is turn on.
+        let at = at * 2 + 2;
+        self.buffer[self.pointer + at] = 0x01;
+        self.buffer[self.pointer + 1 + at] = 0x00;
     }
 
     // c590                    sw      a2,8(a1)
@@ -496,11 +509,14 @@ impl CodeBuffer {
     pub fn color(&mut self, value: u8) {
         for i in 0..8 {
             if (value >> (7 - i) & (1)) == 1 {
+                self.nop_at(0);
+
                 // we need a 1, we need to wait 800ns high
                 self.turn_off_at(2);
             } else {
                 //  low for 800 ns
                 self.turn_off_at(0);
+                self.nop_at(2);
             }
             self.pointer += 8;
         }
@@ -560,23 +576,25 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
 
     // let ptr = ADDRESS as *mut u32;
 
+    let mut buffer = CodeBuffer::new();
     // make the buffer
     for c in colors_array {
-        let mut buffer = CodeBuffer::new();
+        buffer.clear();
         // buffer.configure_registers();
-        // buffer.colors(&c);
+        buffer.colors(&c);
         // return from the function
         // buffer.ret();
 
+        let code_ptr = buffer.as_ptr();
         unsafe {
             // use this to debug how many bytes are used in the buffer
             // ptr.write_volatile(pointer as u32);
             // Delay.delay_millis(1000);
 
             // jump to the code pointer
-            let code_ptr = buffer.as_ptr();
             asm! {
-                "addi  sp,sp,-8
+                "
+            addi  sp,sp,-8
             sw     a1, 0(sp)
             sw     a2, 4(sp)
             jalr   ra,{x},0
