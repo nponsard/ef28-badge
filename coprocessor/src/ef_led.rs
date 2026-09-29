@@ -38,7 +38,325 @@ pub type LedDataArr = [Rgb; LED_COUNT];
 // 16 bytes (8 compressed instructions) to encode 1 bit
 // we need approx 5k
 // const BUFFER_SIZE: usize = 4914;
-const BUFFER_SIZE: usize = 600;
+const BUFFER_SIZE: usize = 208;
+
+const PIN_REGISTER: u32 = 1 << (LED_PIN + 10);
+
+const BASE_BUFFER: [u8; BUFFER_SIZE] = [
+    // === configure registers
+    // Load pin register addr in a1
+    //  65a9 lui a1,0xa
+    0xa9,
+    0x65,
+    // 40058593 addi a1,a1,1024
+    0x93,
+    0x85,
+    0x05,
+    0x40,
+    // Load which pins to toggle in a2
+    // 80 00 06 37       lui	a2,PIN>>12
+    0x37,
+    0x06 | ((PIN_REGISTER >> 10) & 0xF0) as u8,
+    (PIN_REGISTER >> 16) as u8,
+    (PIN_REGISTER >> 24) as u8,
+    // 00 80 06 13      addi a2, zero, PIN
+    0x13,
+    0x06,
+    0x06 | (PIN_REGISTER << 4) as u8,
+    (PIN_REGISTER >> 4) as u8,
+    // 24 bits of color.
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // ret
+    0x80,
+    0x82,
+];
 
 struct CodeBuffer {
     buffer: [u8; BUFFER_SIZE],
@@ -47,8 +365,11 @@ struct CodeBuffer {
 
 impl CodeBuffer {
     pub fn new() -> Self {
-        let buffer: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
-        Self { buffer, pointer: 0 }
+        let buffer: [u8; BUFFER_SIZE] = BASE_BUFFER;
+        Self {
+            buffer,
+            pointer: 14,
+        }
     }
     pub fn clear(&mut self) {
         self.pointer = 0;
@@ -62,13 +383,21 @@ impl CodeBuffer {
     }
 
     // c590                    sw      a2,8(a1)
+    pub fn turn_off_at(&mut self, at: usize) {
+        // each instruction is 2 bytes, first instructions is turn on.
+        let at = at * 2 + 2;
+        self.buffer[self.pointer + at] = 0x90;
+        self.buffer[self.pointer + 1 + at] = 0xc5;
+    }
+
+    // c590                    sw      a2,8(a1)
     pub fn turn_off(&mut self) {
         self.buffer[self.pointer] = 0x90;
         self.buffer[self.pointer + 1] = 0xc5;
         self.pointer += 2;
     }
 
-    // 0001
+    // 0001 two times
     pub fn nop(&mut self) {
         self.buffer[self.pointer] = 0x01;
         self.buffer[self.pointer + 1] = 0x00;
@@ -84,7 +413,10 @@ impl CodeBuffer {
         self.pointer += 2;
     }
 
-    pub fn configure_registers(&mut self) {
+    pub fn configure_registers_old_a(&mut self) {
+        self.pointer += 14;
+    }
+    pub fn configure_registers_old(&mut self) {
         // 65a9 lui	        a1,0xa
         self.buffer[self.pointer] = 0xa9;
         self.buffer[self.pointer + 1] = 0x65;
@@ -125,7 +457,7 @@ impl CodeBuffer {
     }
 
     // write the code for the one color (call this 3 times for one LED)
-    pub fn color(&mut self, value: u8) {
+    pub fn color_old(&mut self, value: u8) {
         for i in 0..8 {
             // turn on
             self.turn_on();
@@ -158,6 +490,29 @@ impl CodeBuffer {
                 self.nop();
             }
         }
+    }
+
+    // write the code for the one color (call this 3 times for one LED)
+    pub fn color(&mut self, value: u8) {
+        for i in 0..8 {
+            if (value >> (7 - i) & (1)) == 1 {
+                // we need a 1, we need to wait 800ns high
+                self.turn_off_at(2);
+            } else {
+                //  low for 800 ns
+                self.turn_off_at(0);
+            }
+            self.pointer += 8;
+        }
+    }
+
+    // write the code for the 24 bits color
+    pub fn colors_old(&mut self, rgb: &Rgb) {
+        let (r, g, b) = rgb;
+        // WS2812B gets first green, then red and then blue
+        self.color(*g);
+        self.color(*r);
+        self.color(*b);
     }
     // write the code for the 24 bits color
     pub fn colors(&mut self, rgb: &Rgb) {
@@ -206,13 +561,12 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
     // let ptr = ADDRESS as *mut u32;
 
     // make the buffer
-    let mut buffer = CodeBuffer::new();
     for c in colors_array {
-        buffer.clear();
-        buffer.configure_registers();
-        buffer.colors(&c);
+        let mut buffer = CodeBuffer::new();
+        // buffer.configure_registers();
+        // buffer.colors(&c);
         // return from the function
-        buffer.ret();
+        // buffer.ret();
 
         unsafe {
             // use this to debug how many bytes are used in the buffer
@@ -230,7 +584,8 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
             lw     a2, 4(sp)
             addi   sp,sp,8
             ",
-            x= in(reg) code_ptr}
+            x= in(reg) code_ptr
+            }
         }
     }
 }

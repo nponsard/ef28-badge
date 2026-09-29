@@ -5,7 +5,7 @@ mod ef_led;
 mod led_data;
 
 use ef_led::LED_PIN;
-use esp_lp_hal::{delay::Delay, gpio::Output, prelude::*};
+use esp_lp_hal::{gpio::Output, prelude::*};
 use panic_halt as _;
 
 use crate::animation::Animator;
@@ -31,7 +31,7 @@ const SETTINGS: *mut u32 = SETTINGS_ADDR as *mut u32;
 fn main(mut led_pin: Output<LED_PIN>, mut gpio9: Output<9>) -> ! {
     // enable boost converter to drive the leds
     gpio9.set_output(true);
-    led_pin.set_output(true);
+    led_pin.set_output(false);
 
     unsafe {
         DEBUG_WORD.write_volatile(122);
