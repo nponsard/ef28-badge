@@ -594,15 +594,15 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
             // jump to the code pointer
             asm! {
                 "
-            addi  sp,sp,-8
-            sw     a1, 0(sp)
-            sw     a2, 4(sp)
-            jalr   ra,{x},0
-            lw     a1, 0(sp)
-            lw     a2, 4(sp)
-            addi   sp,sp,8
-            ",
-            x= in(reg) code_ptr
+                addi  sp,sp,-8
+                sw     a1, 0(sp)
+                sw     a2, 4(sp)
+                jalr   ra,{x},0
+                lw     a1, 0(sp)
+                lw     a2, 4(sp)
+                addi   sp,sp,8
+                ",
+                x= in(reg) code_ptr
             }
         }
     }
