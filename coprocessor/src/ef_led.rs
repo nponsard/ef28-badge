@@ -632,467 +632,491 @@ pub fn colors_asm(rgb: Rgb) {
         asm!(
          "
 
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
             
-            andi a3, a2, 0x01
-            c.srli a2, 1
-            c.beqz a3, 2f
-            # bit 1
-            sw a1, 4(a0) # on
+            andi a3, a4, 0x01
+            c.bnez a3, 2f
             c.nop
             c.nop
-            c.sw a1, 8(a0) # off
+            # bit 0
+            c.sw a2, 4(a1) # on
+            c.sw a2, 8(a1) # off
+            c.srli a4, 1
             c.j 3f
             
-        2: # bit 0
-            sw a1, 4(a0) # on
-            c.sw a1, 8(a0) # off
-            c.nop 
-            c.nop 
-            c.nop 
+        2: # bit 1
+            c.sw a2, 4(a1) # on
+            c.nop
+            c.srli a4, 1
+            c.nop
+            c.nop
+            c.sw a2, 8(a1) # off
             c.nop
         3: 
         "
         ,
-            in("a2") b,
-            in("a1") PIN_REGISTER,
-            in("a0") GPIO_REG,
+            in("a4") b,
+            in("a2") PIN_REGISTER,
+            in("a1") GPIO_REG,
             out("a3") _,
             // c = inout(reg) counter,
         );
