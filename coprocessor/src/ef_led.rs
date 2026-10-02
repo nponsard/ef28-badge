@@ -585,47 +585,80 @@ impl CodeBuffer {
 pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iterator<Item = Rgb>) {
     // ensure we start at low and we pause for enough time (RES)
     led_pin.set_output(false);
-    // Delay.delay_millis(1);
+    Delay.delay_millis(1);
 
     // let ptr = ADDRESS as *mut u32;
 
     // make the buffer
     let mut buffer = CodeBuffer::new();
     for c in colors_array {
-        Delay.delay_micros(30);
+        // Delay.delay_micros(30);
         // buffer.clear();
         // buffer.configure_registers();
         // buffer.colors(&c);
         // return from the function
         // buffer.ret();
 
-        let code_ptr = buffer.as_ptr();
-        unsafe {
-            // use this to debug how many bytes are used in the buffer
-            // ptr.write_volatile(pointer as u32);
-            // Delay.delay_millis(1000);
+        colors_asm(c);
 
-            // jump to the code pointer
-            asm! {
-                "
-                addi  sp,sp,-8
-                sw     a1, 0(sp)
-                sw     a2, 4(sp)
-                jalr   ra,{x},0
-                lw     a1, 0(sp)
-                lw     a2, 4(sp)
-                addi   sp,sp,8
-                ",
-                x= in(reg) code_ptr
-            }
-            // led_pin.set_output(true);
-        }
+        // let code_ptr = buffer.as_ptr();
+        // unsafe {
+        //     // use this to debug how many bytes are used in the buffer
+        //     // ptr.write_volatile(pointer as u32);
+        //     // Delay.delay_millis(1000);
+
+        //     // jump to the code pointer
+        //     asm! {
+        //         "
+        //         addi  sp,sp,-8
+        //         sw     a1, 0(sp)
+        //         sw     a2, 4(sp)
+        //         jalr   ra,{x},0
+        //         lw     a1, 0(sp)
+        //         lw     a2, 4(sp)
+        //         addi   sp,sp,8
+        //         ",
+        //         x= in(reg) code_ptr
+        //     }
+        //     // led_pin.set_output(true);
+        // }
     }
 }
 
-
-
-
+pub fn colors_asm(rgb: Rgb) {
+    let b: u32 = u32::from_le_bytes([0x00, rgb.0, rgb.1, rgb.2]);
+    let mut counter = 24;
+    unsafe {
+        asm!(
+         "
+        0:
+            c.beqz  {c}, 3f
+            c.addi {c}, -1
+            andi {t}, {b}, 0x01
+            c.srli {b}, 1
+            c.beqz {t}, 2f
+        1:
+            c.sw a5, 4(a4) # on
+            nop
+            c.sw a5, 8(a4) # off
+            c.j 0b
+            
+        2:
+            c.sw a5, 4(a4) # on
+            c.sw a5, 8(a4) # off
+            #c.srli {b}, 1
+            c.j 0b
+        3:
+        "
+        ,
+            b = in(reg) b,
+            in("a5") PIN_REGISTER,
+            in("a4") GPIO_REG,
+            t = out(reg) _,
+            c = inout(reg) counter,
+        );
+    }
+}
 
 pub fn colors(led_pin: &mut Output<LED_PIN>, rgb: &Rgb) {
     let (r, g, b) = rgb;

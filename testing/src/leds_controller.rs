@@ -20,7 +20,6 @@ const SETTINGS_MEMORY: *mut u32 = SETTINGS_ADDR as *mut u32;
 
 const LED_PIN: u8 = 21;
 
-
 #[ariel_os::task(autostart, peripherals)]
 async fn ulp_setup(peripherals: pins::Ulp) {
     let boost = LowPowerOutput::new(peripherals.boost);
