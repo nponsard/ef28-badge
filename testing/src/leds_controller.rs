@@ -18,7 +18,7 @@ const DEBUG_WORD: *mut u32 = DEBUG_WORD_ADDR as *mut u32;
 const SETTINGS_ADDR: usize = SHARED_START + 4;
 const SETTINGS_MEMORY: *mut u32 = SETTINGS_ADDR as *mut u32;
 
-const LED_PIN: u8 = 1;
+const LED_PIN: u8 = 21;
 
 
 #[ariel_os::task(autostart, peripherals)]

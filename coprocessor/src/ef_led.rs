@@ -15,7 +15,7 @@
 ///
 use core::arch::asm;
 
-use esp_lp_hal::gpio::Output;
+use esp_lp_hal::{delay::Delay, gpio::Output};
 
 // Shared address with the main processor where you can write debug codes
 // const ADDRESS: u32 = 0x20;
@@ -28,20 +28,19 @@ const T0L: u8 = T1H;
 // const T1L: u8 = 0;
 
 pub const LED_COUNT: usize = 17;
-pub const LED_PIN: u8 = 1;
+pub const LED_PIN: u8 = 21;
 pub type Rgb = (u8, u8, u8);
 
 pub type LedDataArr = [Rgb; LED_COUNT];
+
+const PIN_REGISTER: u32 = 1 << (LED_PIN + 10);
 
 // 17 leds
 // 24 bits per led
 // 16 bytes (8 compressed instructions) to encode 1 bit
 // we need approx 5k
 // const BUFFER_SIZE: usize = 4914;
-const BUFFER_SIZE: usize = 208;
-
-const PIN_REGISTER: u32 = 1 << (LED_PIN + 10);
-
+const BUFFER_SIZE: usize = 224;
 const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     // === configure registers
     // Load pin register addr in a1
@@ -71,290 +70,305 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     // 0001 c.nop
     // 3 times,
     // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // 0x01,
-    // 0x00,
-    0x09,
+    0x90,
     0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    /// ============== THIS BIT IS ONE temporarily
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x90,
+    0xc5,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
     // ret
     0x82,
     0x80,
@@ -571,17 +585,17 @@ impl CodeBuffer {
 pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iterator<Item = Rgb>) {
     // ensure we start at low and we pause for enough time (RES)
     led_pin.set_output(false);
-    // generating the array takes ~20-25ms, no need to sleep
     // Delay.delay_millis(1);
 
     // let ptr = ADDRESS as *mut u32;
 
-    let mut buffer = CodeBuffer::new();
     // make the buffer
+    let mut buffer = CodeBuffer::new();
     for c in colors_array {
-        buffer.clear();
+        Delay.delay_micros(30);
+        // buffer.clear();
         // buffer.configure_registers();
-        buffer.colors(&c);
+        // buffer.colors(&c);
         // return from the function
         // buffer.ret();
 
@@ -604,6 +618,7 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
                 ",
                 x= in(reg) code_ptr
             }
+            // led_pin.set_output(true);
         }
     }
 }
