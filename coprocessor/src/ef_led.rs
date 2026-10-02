@@ -637,14 +637,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             
@@ -653,14 +657,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -668,14 +676,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -683,14 +695,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -698,14 +714,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -713,14 +733,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -728,14 +752,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -743,14 +771,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -758,14 +790,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -773,14 +809,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -788,14 +828,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -803,14 +847,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -818,14 +866,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -833,14 +885,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -848,14 +904,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -863,14 +923,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -878,14 +942,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -893,14 +961,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -908,14 +980,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -923,14 +999,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -938,14 +1018,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -953,14 +1037,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -968,14 +1056,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
             
             andi a3, a2, 0x01
@@ -983,14 +1075,18 @@ pub fn colors_asm(rgb: Rgb) {
             c.beqz a3, 2f
             # bit 1
             sw a1, 4(a0) # on
-            nop
-            nop
-            sw a1, 8(a0) # off
+            c.nop
+            c.nop
+            c.sw a1, 8(a0) # off
             c.j 3f
             
         2: # bit 0
             sw a1, 4(a0) # on
-            sw a1, 8(a0) # off
+            c.sw a1, 8(a0) # off
+            c.nop 
+            c.nop 
+            c.nop 
+            c.nop
         3: 
         "
         ,
