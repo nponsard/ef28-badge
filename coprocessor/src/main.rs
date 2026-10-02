@@ -49,8 +49,8 @@ fn main(mut led_pin: Output<LED_PIN>, mut gpio9: Output<9>) -> ! {
     let tick_delay_ms = 0;
     loop {
         let settings = unsafe { SETTINGS.read_volatile() };
-        // let intensity = settings as u8;
-        let intensity = 50;
+        let intensity = settings as u8;
+        // let intensity = 50;
 
         let pattern = (settings >> 8) as u8;
         let pattern_settings = (settings >> 16) as u16;
