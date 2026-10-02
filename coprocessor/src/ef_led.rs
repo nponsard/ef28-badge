@@ -622,3 +622,62 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
         }
     }
 }
+
+
+
+
+
+pub fn colors(led_pin: &mut Output<LED_PIN>, rgb: &Rgb) {
+    let (r, g, b) = rgb;
+    // WS2812B gets first green, then red and then blue
+    color(led_pin, *g);
+    color(led_pin, *r);
+    color(led_pin, *b);
+}
+
+const GPIO_REG: u32 = 0xa400;
+
+// write the code for the one color (call this 3 times for one LED)
+pub fn color(led_pin: &mut Output<LED_PIN>, mut value: u8) {
+    for _ in 0..8 {
+        if (value & 1) == 1 {
+            unsafe {
+                asm!(
+                         "
+                sw {pin}, 4({reg})
+                nop 
+                nop
+                nop
+                sw {pin}, 8({reg})
+
+                ",
+                pin  = in (reg) PIN_REGISTER,
+                reg = in(reg) GPIO_REG,
+                )
+            }
+        } else {
+            unsafe {
+                asm!(
+                         "
+                sw {pin}, 4({reg})
+                sw {pin}, 8({reg})
+                nop
+                ",
+                pin  = in (reg) PIN_REGISTER,
+                reg = in(reg) GPIO_REG,
+                )
+            }
+        }
+        // unsafe { &*RTC_IO::PTR }
+        //     .out_w1tc()
+        //     .write(|w| unsafe { w.out_data_w1tc().bits(1 << LED_PIN) });
+        value = value >> 1;
+        // unsafe {
+        //     asm!(
+        //         "
+        //         nop
+        //         "
+        //     );
+        // }
+    }
+}
