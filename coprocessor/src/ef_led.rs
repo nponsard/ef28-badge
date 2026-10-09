@@ -38,7 +38,7 @@ pub type LedDataArr = [Rgb; LED_COUNT];
 // 16 bytes (8 compressed instructions) to encode 1 bit
 // we need approx 5k
 // const BUFFER_SIZE: usize = 4914;
-const BUFFER_SIZE: usize = 240;
+const BUFFER_SIZE: usize = 332;
 
 const PIN_REGISTER: u32 = 1 << (LED_PIN + 10);
 const GPIO_REG: u32 = 0xa400;
@@ -80,16 +80,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
     0x01,
     0x00,
     0x01,
@@ -104,16 +94,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
     0x01,
     0x00,
     0x01,
@@ -136,16 +116,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
     0x01,
     0x00,
     0x01,
@@ -160,16 +130,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
     0x01,
     0x00,
     0x01,
@@ -192,16 +152,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
     0x01,
     0x00,
     0x01,
@@ -216,16 +166,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
     0x01,
     0x00,
     0x01,
@@ -248,16 +188,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
     0x01,
     0x00,
     0x01,
@@ -272,16 +202,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
     0x01,
     0x00,
     0x01,
@@ -304,16 +224,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
-    0x01,
-    0x00,
-    0x01,
-    0x00,
     0x01,
     0x00,
     0x01,
@@ -328,16 +238,6 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
-    0x01,
-    0x00,
-    0x01,
-    0x00,
-    // turn on c1d0 sw      a2,4(a1)
-    0xd0,
-    0xc1,
-    // 0001 c.nop
-    // 3 times,
-    // place turn_off either in the first position for a 0, or in the last position for a 1.
     0x01,
     0x00,
     0x01,
@@ -360,6 +260,28 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
     // turn on c1d0 sw      a2,4(a1)
     0xd0,
     0xc1,
@@ -374,12 +296,182 @@ const BASE_BUFFER: [u8; BUFFER_SIZE] = [
     0x00,
     0x01,
     0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
     // turn on c1d0 sw      a2,4(a1)
     0xd0,
     0xc1,
     // 0001 c.nop
     // 3 times,
     // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    0x01,
+    0x00,
+    // turn on c1d0 sw      a2,4(a1)
+    0xd0,
+    0xc1,
+    // 0001 c.nop
+    // 3 times,
+    // place turn_off either in the first position for a 0, or in the last position for a 1.
+    0x01,
+    0x00,
+    0x01,
+    0x00,
     0x01,
     0x00,
     0x01,
@@ -412,16 +504,18 @@ struct CodeBuffer {
     pointer: usize,
 }
 
+const BASE_POINTER:usize = 0;
+
 impl CodeBuffer {
     pub fn new() -> Self {
         let buffer: [u8; BUFFER_SIZE] = BASE_BUFFER;
         Self {
             buffer,
-            pointer: 14,
+            pointer: BASE_POINTER,
         }
     }
     pub fn clear(&mut self) {
-        self.pointer = 0;
+        self.pointer = BASE_POINTER;
     }
 
     pub fn clear_old(&mut self) {
@@ -592,7 +686,7 @@ impl CodeBuffer {
                 self.turn_off_at(0);
                 self.nop_at(2);
             }
-            self.pointer += 10;
+            self.pointer += 14;
             value = value >> 1;
         }
     }
@@ -636,16 +730,19 @@ pub fn run<'a, const PIN: u8>(led_pin: &mut Output<PIN>, colors_array: impl Iter
 
     let mut colors = [0u32; LED_COUNT];
 
+    let mut buffer = CodeBuffer::new();
     for (i, c) in colors_array.enumerate() {
         colors[i] = u32::from_le_bytes([0x00, c.0, c.1, c.2]);
+        if i == 10{
+            buffer.colors(colors[i]);
+        }
     }
 
-    let mut buffer = CodeBuffer::new();
     // make the buffer
     for c in colors {
-        buffer.clear();
+        // buffer.clear();
         // buffer.configure_registers();
-        buffer.colors(c);
+        // buffer.colors(c);
         // return from the function
         // buffer.ret();
 
